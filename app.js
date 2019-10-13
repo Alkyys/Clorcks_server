@@ -1,6 +1,19 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express();
+const mongoose = require('mongoose')
+
+// variables d'environements
+require('dotenv').config()
+
+// connection a la BD
+mongoose.connect(process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, (err, client) => {
+  if (err) return console.log(err)
+})
+// TODO: resoudre le probleme de lien BD en string 
 
 app.use(express.urlencoded({
   extended: false
