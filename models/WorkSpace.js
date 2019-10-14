@@ -16,6 +16,10 @@ const WorkSpaceSchema = new mongoose.Schema({
     type: [ObjectId],
     default: undefined,
     ref: 'Colors'
+  },
+  createdOn: {
+    type: Date,
+    default: Date.now
   }
 })
 

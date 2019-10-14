@@ -8,6 +8,10 @@ const GradiantSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
+  createdOn: {
+    type: Date,
+    default: Date.now
+  },
   label: {
     type: String
   },

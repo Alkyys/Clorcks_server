@@ -10,7 +10,7 @@ require('dotenv').config()
 mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-}, (err, client) => {
+}, (err) => {
   if (err) return console.log(err)
 })
 // TODO: resoudre le probleme de lien BD en string 
@@ -20,7 +20,8 @@ app.use(express.urlencoded({
 }));
 app.use(express.json());
 
-//gestion de cors errors
+//gestion de cors errors  
+// TODO: restreindre les droits cors
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
@@ -34,8 +35,12 @@ app.use((req, res, next) => {
 // my routes
 const colorsRoutes = require('./routes/colors')
 const palettesRoutes = require('./routes/palettes')
+const gradiantsRoutes = require('./routes/gradiants')
+const usersRoutes = require('./routes/users')
 app.use('/colors', colorsRoutes)
 app.use('/palettes', palettesRoutes)
+app.use('/gradiants', gradiantsRoutes)
+app.use('/users', usersRoutes)
 
 
 app.use(morgan('dev'))

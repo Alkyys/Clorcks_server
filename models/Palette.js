@@ -24,6 +24,10 @@ const PaletteSchema = new mongoose.Schema({
     required: true,
     default: null,
     validate: [arrayLimit, '{PATH} exceeds the limit']
+  },
+  createdOn: {
+    type: Date,
+    default: Date.now
   }
 })
 
