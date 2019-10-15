@@ -45,7 +45,6 @@ router.get('/:colorId', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-  console.log("TCL:   process.env.DATABASE_URL", process.env.DATABASE_URL)
   const color = new Color({
     red: req.body.red,
     blue: req.body.blue,
@@ -55,8 +54,7 @@ router.post('/', (req, res, next) => {
   })
   color.save().then(result => {
     res.status(201).json({
-      message: 'POST methode from colors',
-      resultat: result
+      result
     })
   })
     .catch(err => {
@@ -99,4 +97,5 @@ router.delete('/:colorId', (req, res, next) => {
       })
     })
 })
+
 module.exports = router

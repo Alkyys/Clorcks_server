@@ -2,35 +2,91 @@ const express = require('express')
 const router = express.Router()
 const Gradiant = require('./../models/Gradient.js')
 
-router.get('/',(req, res, next) => {
-  res.status(200).json({
-    message: 'GET methode from gradiants'
-  })
+router.get('/', (req, res, next) => {
+  Gradiant.find().limit(50).exec()
+    .then(docs => {
+      console.log(docs)
+      res.status(200).json(docs)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
 })
 
-router.get('/:gradiantsId',(req, res, next) => {
-  res.status(200).json({
-    message: 'GET methode from gradiants with ' + req.params.gradiantsId
-  })
+router.get('/:gradiantId', (req, res, next) => {
+  const id = req.params.gradiantId
+  Gradiant.findById(id).exec()
+    .then(doc => {
+      console.log(doc)
+      if (doc) {
+        res.status(200).json(doc)
+      } else {
+        res.status(404).json({
+          message: 'Nous avons rien trouver ... '
+        })
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
 })
 
-router.post('/',(req, res, next) => {
-  const gradiant = {
+router.post('/', (req, res, next) => {
+  const gradiant = new Gradiant({
     user_id: req.body.user_id,
     stops: req.body.stops,
     user_id: req.body.label,
-
-  }
-  res.status(201).json({
-    message: 'POST methode from gradiants',
-    resultat: gradiant
   })
+  gradiant.save().then(result => {
+    res.status(201).json({
+      result
+    })
+  })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
 })
 
-router.delete('/:gradiantsId',(req, res, next) => {
-  res.status(201).json({
-    message: 'DELETE methode from gradiants' + req.params.gradiantsId
-  })
+router.patch('/:gradiantId', (req, res, next) => {
+  const id = req.params.gradiantId
+  const updateOps = {}
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value
+  }
+  Gradiant.updateOne({ _id: id }, { $set: updateOps })
+    .exec()
+    .then(result => {
+      res.status(200).json(result)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
+})
+
+router.delete('/:gradiantsId', (req, res, next) => {
+  const id = req.params.gradiantsId
+  Gradiant.remove({ _id: id }).exec()
+    .then(result => {
+      res.status(200).json(result)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
 })
 
 module.exports = router
