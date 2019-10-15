@@ -10,12 +10,14 @@ const WorkSpaceSchema = new mongoose.Schema({
   colors_id: {
     type: [ObjectId],
     default: undefined,
-    ref: 'Colors'
+    ref: 'Colors',
+    required: true
   },
   likes: {
     type: [ObjectId],
     default: undefined,
-    ref: 'Colors'
+    ref: 'Colors',
+    required: true
   },
   createdOn: {
     type: Date,

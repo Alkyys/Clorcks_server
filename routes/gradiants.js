@@ -41,7 +41,7 @@ router.post('/', (req, res, next) => {
   const gradiant = new Gradiant({
     user_id: req.body.user_id,
     stops: req.body.stops,
-    user_id: req.body.label,
+    label: req.body.label,
   })
   gradiant.save().then(result => {
     res.status(201).json({

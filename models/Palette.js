@@ -10,7 +10,7 @@ const PaletteSchema = new mongoose.Schema({
   },
   likeCount: {
     type: Number,
-    required: true
+    default: 0
   },
   label: {
     type: String,
@@ -19,10 +19,9 @@ const PaletteSchema = new mongoose.Schema({
   colors_id: {
     type: [{
       type: ObjectId,
-      ref: 'Colors'
+      ref: 'Color'
     }],
     required: true,
-    default: null,
     validate: [arrayLimit, '{PATH} exceeds the limit']
   },
   createdOn: {

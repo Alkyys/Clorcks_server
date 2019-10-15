@@ -19,7 +19,6 @@ const GradiantSchema = new mongoose.Schema({
     type: new mongoose.Schema({
       color: {
         type: ObjectId,
-        required: true,
         ref: 'Colors'
       },
       position: {
@@ -29,6 +28,7 @@ const GradiantSchema = new mongoose.Schema({
         required: true
       }
     }),
+    required: true,
     validate: [arrayLimit, '{PATH} exceeds the limit']
   }]
 })

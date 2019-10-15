@@ -41,8 +41,9 @@ router.post('/', (req, res, next) => {
   const palette = new Palette({
     user_id: req.body.user_id,
     label: req.body.label,
-    color_id: req.body.color_id
+    colors_id: req.body.colors_id
   })
+  console.log(palette)
   palette.save().then(result => {
     res.status(201).json({
       result
