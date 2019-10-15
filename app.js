@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 // variables d'environements
 require('dotenv').config()
+app.use(morgan('dev'))
 
 // connection a la BD
 mongoose.connect(process.env.DATABASE_URL, {
@@ -41,9 +42,6 @@ app.use('/colors', colorsRoutes)
 app.use('/palettes', palettesRoutes)
 app.use('/gradiants', gradiantsRoutes)
 app.use('/users', usersRoutes)
-
-
-app.use(morgan('dev'))
 
 //middleware qui gere les requetes innexistante
 app.use((req, res, next) => {
