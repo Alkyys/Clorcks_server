@@ -34,4 +34,4 @@ function arrayLimit (val) {
   return val.length >= 2 && val.length <= 5
 }
 
-module.exports = mongoose.model('palette', PaletteSchema)
+module.exports = mongoose.model('Palette', PaletteSchema)

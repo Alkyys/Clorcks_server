@@ -42,10 +42,10 @@ router.post('/', (req, res, next) => {
     name: req.body.name
   })
   user.save().then(result => {
-    res.status(201).json({
-      result
+      res.status(201).json({
+        result
+      })
     })
-  })
     .catch(err => {
       console.log(err)
       res.status(500).json({
@@ -60,7 +60,11 @@ router.patch('/:userId', (req, res, next) => {
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
   }
-  User.updateOne({ _id: id }, { $set: updateOps })
+  User.updateOne({
+      _id: id
+    }, {
+      $set: updateOps
+    })
     .exec()
     .then(result => {
       res.status(200).json(result)
@@ -75,7 +79,9 @@ router.patch('/:userId', (req, res, next) => {
 
 router.delete('/:usersId', (req, res, next) => {
   const id = req.params.usersId
-  User.remove({ _id: id }).exec()
+  User.remove({
+      _id: id
+    }).exec()
     .then(result => {
       res.status(200).json(result)
     })

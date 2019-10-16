@@ -3,7 +3,10 @@ const router = express.Router()
 const Palette = require('./../models/Palette')
 
 router.get('/', (req, res, next) => {
-  Palette.find().limit(50).exec()
+  Palette.find().limit(50)
+    .populate('colors_id')
+    .populate('user_id','name')
+    .exec()
     .then(docs => {
       console.log(docs)
       res.status(200).json(docs)
@@ -18,7 +21,10 @@ router.get('/', (req, res, next) => {
 
 router.get('/:paletteId', (req, res, next) => {
   const id = req.params.paletteId
-  Palette.findById(id).exec()
+  Palette.findById(id)
+    .populate('colors_id')
+    .populate('user_id','name')
+    .exec()
     .then(doc => {
       console.log(doc)
       if (doc) {
@@ -45,10 +51,10 @@ router.post('/', (req, res, next) => {
   })
   console.log(palette)
   palette.save().then(result => {
-    res.status(201).json({
-      result
+      res.status(201).json({
+        result
+      })
     })
-  })
     .catch(err => {
       console.log(err)
       res.status(500).json({
@@ -63,7 +69,11 @@ router.patch('/:paletteId', (req, res, next) => {
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
   }
-  Palette.updateOne({ _id: id }, { $set: updateOps })
+  Palette.updateOne({
+      _id: id
+    }, {
+      $set: updateOps
+    })
     .exec()
     .then(result => {
       res.status(200).json(result)
@@ -78,7 +88,9 @@ router.patch('/:paletteId', (req, res, next) => {
 
 router.delete('/:paletteId', (req, res, next) => {
   const id = req.params.paletteId
-  Palette.remove({ _id: id }).exec()
+  Palette.remove({
+      _id: id
+    }).exec()
     .then(result => {
       res.status(200).json(result)
     })
