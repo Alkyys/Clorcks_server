@@ -4,7 +4,7 @@ const Gradiant = require('./../models/Gradient.js')
 
 router.get('/', (req, res, next) => {
   Gradiant.find().limit(50)
-    .populate('color')
+    .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
     .exec()
     .then(docs => {
@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
 router.get('/:gradiantId', (req, res, next) => {
   const id = req.params.gradiantId
   Gradiant.findById(id)
-    .populate('color')
+  .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
     .exec()
     .then(doc => {
@@ -50,10 +50,10 @@ router.post('/', (req, res, next) => {
     label: req.body.label,
   })
   gradiant.save().then(result => {
-      res.status(201).json({
-        result
-      })
+    res.status(201).json({
+      result
     })
+  })
     .catch(err => {
       console.log(err)
       res.status(500).json({
@@ -69,10 +69,10 @@ router.patch('/:gradiantId', (req, res, next) => {
     updateOps[ops.propName] = ops.value
   }
   Gradiant.updateOne({
-      _id: id
-    }, {
-      $set: updateOps
-    })
+    _id: id
+  }, {
+    $set: updateOps
+  })
     .exec()
     .then(result => {
       res.status(200).json(result)
@@ -88,8 +88,8 @@ router.patch('/:gradiantId', (req, res, next) => {
 router.delete('/:gradiantsId', (req, res, next) => {
   const id = req.params.gradiantsId
   Gradiant.remove({
-      _id: id
-    }).exec()
+    _id: id
+  }).exec()
     .then(result => {
       res.status(200).json(result)
     })

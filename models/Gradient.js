@@ -2,6 +2,19 @@ const mongoose = require('mongoose');
 
 const ObjectId = mongoose.Schema.Types.ObjectId
 
+const StopSchema = new mongoose.Schema({
+  color: {
+    type: ObjectId,
+    ref: 'Color'
+  },
+  position: {
+    type: Number,
+    min: 0,
+    max: 100,
+    required: true
+  }
+}, { _id: false })
+
 const GradiantSchema = new mongoose.Schema({
   user_id: {
     type: ObjectId,
@@ -16,21 +29,10 @@ const GradiantSchema = new mongoose.Schema({
     type: String
   },
   stops: [{
-    type: new mongoose.Schema({
-      color: {
-        type: ObjectId,
-        ref: 'Colors'
-      },
-      position: {
-        type: Number,
-        min: 0,
-        max: 100,
-        required: true
-      }
-    }),
+    type: StopSchema,
     required: true,
     validate: [arrayLimit, '{PATH} exceeds the limit']
-  }]
+  }],
 })
 
 
