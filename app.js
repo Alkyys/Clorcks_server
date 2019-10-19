@@ -14,7 +14,6 @@ mongoose.connect(process.env.DATABASE_URL, {
 }, (err) => {
   if (err) return console.log(err)
 })
-// TODO: resoudre le probleme de lien BD en string 
 
 app.use(express.urlencoded({
   extended: false
