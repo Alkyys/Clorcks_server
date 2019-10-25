@@ -21,7 +21,7 @@ const GradiantSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
-  createdOn: {
+  createdAt: {
     type: Date,
     default: Date.now
   },

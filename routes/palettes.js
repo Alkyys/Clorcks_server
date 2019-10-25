@@ -1,105 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const Palette = require('./../models/Palette')
+const PaletteController = require('./../controllers/palettes')
 
-router.get('/', (req, res, next) => {
-  Palette.find().limit(50)
-    .populate('colors_id')
-    .populate('user_id','name')
-    .exec()
-    .then(docs => {
-      console.log(docs)
-      res.status(200).json(docs)
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
-})
+router.get('/', PaletteController.getAll)
 
-router.get('/:paletteId', (req, res, next) => {
-  const id = req.params.paletteId
-  Palette.findById(id)
-    .populate('colors_id')
-    .populate('user_id','name')
-    .exec()
-    .then(doc => {
-      console.log(doc)
-      if (doc) {
-        res.status(200).json(doc)
-      } else {
-        res.status(404).json({
-          message: 'Nous avons rien trouver ... '
-        })
-      }
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
-})
+router.get('/:paletteId', PaletteController.get)
 
-router.post('/', (req, res, next) => {
-  const palette = new Palette({
-    user_id: req.body.user_id,
-    label: req.body.label,
-    colors_id: req.body.colors_id
-  })
-  console.log(palette)
-  palette.save().then(result => {
-      res.status(201).json({
-        result
-      })
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
-})
+router.post('/', PaletteController.post)
 
-router.patch('/:paletteId', (req, res, next) => {
-  const id = req.params.paletteId
-  const updateOps = {}
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value
-  }
-  Palette.updateOne({
-      _id: id
-    }, {
-      $set: updateOps
-    })
-    .exec()
-    .then(result => {
-      res.status(200).json(result)
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
-})
+router.patch('/:paletteId', PaletteController.patch)
 
-router.delete('/:paletteId', (req, res, next) => {
-  const id = req.params.paletteId
-  Palette.remove({
-      _id: id
-    }).exec()
-    .then(result => {
-      res.status(200).json(result)
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
-})
+router.delete('/:paletteId', PaletteController.delete)
 
 module.exports = router

@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 // variables d'environements
 require('dotenv').config()
+
 app.use(morgan('dev'))
 
 // connection a la BD
@@ -14,6 +15,7 @@ mongoose.connect(process.env.DATABASE_URL, {
 }, (err) => {
   if (err) return console.log(err)
 })
+ mongoose.set('useCreateIndex', true)
 
 app.use(express.urlencoded({
   extended: false
@@ -48,7 +50,6 @@ app.use((req, res, next) => {
   error.status = 404
   next(error)
 })
-
 app.use((error, req, res, next) => {
   res.status(error.status || 500)
   res.json({
@@ -57,4 +58,5 @@ app.use((error, req, res, next) => {
     }
   })
 })
+
 module.exports = app
