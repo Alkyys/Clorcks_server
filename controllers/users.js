@@ -1,7 +1,8 @@
-const User = require('./../models/User')
+import User, { find, findById, updateOne, remove } from './../models/User'
+import auth from './../middleware/auth.js'
 
-exports.getAll = (req, res, next) => {
-  User.find().limit(200).exec()
+export function getAll(req, res, next) {
+  find().limit(200).exec()
     .then(docs => {
       console.log(docs)
       res.status(200).json(docs)
@@ -14,9 +15,9 @@ exports.getAll = (req, res, next) => {
     })
 }
 
-exports.get = (req, res, next) => {
+export function get(req, res, next) {
   const id = req.params.usersId
-  User.findById(id).exec()
+  findById(id).exec()
     .then(doc => {
       console.log(doc)
       if (doc) {
@@ -35,13 +36,12 @@ exports.get = (req, res, next) => {
     })
 }
 
-exports.postSignup = (req, res, next) => {
+export function signup(req, res, next) {
   const user = new User({
     _id: req.body.id,
     //name: req.body.name, TODO: probleme nom
     email: req.body.email
   })
-  // user.save()
   auth
     .signup(req.body.email, req.body.password)
     .then(result => {
@@ -59,42 +59,63 @@ exports.postSignup = (req, res, next) => {
     })
 }
 
-exports.postLogin = (req, res, next) => {
-  User.findOne({ email: 'alkyys@gmail.com' }).exec()
-    .then(user => {
-      console.log(user) // TODO: fix problem user vide
-      if (!user.length) {
-        return res.status(401).json({
-          message: 'Auth failed'
-        })
-      }
-      const token = jwt.sign({
-        email: req.body.email,
-        name: req.body.name
-      }, process.env.JWT_KEY,
-        {
-          expiresIn: "1h"
-        }) // TODO: JWT refrech
+export function login(req, res, next) {
+  auth
+    .login(req.body.email, req.body.password)
+    .then(result => {
       return res.status(200).json({
         message: "Auth successful",
-        token: token,
-        body: req.body
+        response: result
       })
     }).catch(err => {
-      console.log(err)
-      res.status(500).json({
+      res.status(401).json({
+        message: "Auth faild",
         error: err
       })
     })
 }
 
-exports.patch = (req, res, next) => {
+export function logout(req, res, next) {
+  const user = auth.currentUser();
+  user
+    .logout()
+    .then(result => {
+      res.status(200).json({
+        message: `Lougout successful`,
+        response: result
+      })
+    })
+    .catch(err => {
+      res.status(401).json({
+        message: "Logout faild",
+        error: err
+      })
+    })
+}
+
+export function recoverypsw(req, res, next) {
+  auth
+    .requestPasswordRecovery(req.body.email)
+    .then(response => {
+      return res.status(200).json({
+        message: "recovery successful",
+        response: response
+      })
+    }).catch(err => {
+      res.status(401).json({
+        message: "recovery faild",
+        error: err
+      })
+    })
+}
+
+export function patch(req, res, next) {
   const id = req.params.userId
   const updateOps = {}
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
   }
-  User.updateOne({
+  updateOne({
     _id: id
   }, {
     $set: updateOps
@@ -111,9 +132,9 @@ exports.patch = (req, res, next) => {
     })
 }
 
-exports.delete = (req, res, next) => {
+export function del(req, res, next) {
   const id = req.params.usersId
-  User.remove({
+  remove({
     _id: id
   }).exec()
     .then(result => {

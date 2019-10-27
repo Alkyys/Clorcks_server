@@ -6,12 +6,12 @@ router.get('/', UserController.getAll)
 
 router.get('/:usersId', UserController.get)
 
-router.post('/signup', UserController.postSignup)
+router.post('/signup', UserController.signup)
 
-router.post('/login', UserController.postLogin)
+router.post('/login', UserController.login)
 
 router.patch('/:userId', UserController.patch)
 
-router.delete('/:usersId', UserController.delete)
+router.delete('/:usersId', UserController.del)
 
 module.exports = router

@@ -1,6 +1,6 @@
- const GoTrue = require('gotrue-js') ;
+import GoTrue from 'gotrue-js';
 
-auth = new GoTrue({
+let auth = new GoTrue({
   APIUrl: process.env.APIUrl,
   audience: "",
   setCookie: true
