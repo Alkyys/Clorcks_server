@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose';
 
 const ObjectId = Schema.Types.ObjectId
 
@@ -16,14 +16,14 @@ const StopSchema = new Schema({
 }, { _id: false })
 
 const GradiantSchema = new Schema({
-  user_id: {
-    type: ObjectId,
-    required: true,
-    ref: 'User'
-  },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  workspace_id: {
+    type: ObjectId,
+    required: true,
+    ref: 'WorkSpace'
   },
   label: {
     type: String

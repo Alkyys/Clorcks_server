@@ -1,13 +1,8 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose';
 
 const ObjectId = Schema.Types.ObjectId
 
 const PaletteSchema = new Schema({
-  user_id: {
-    type: ObjectId,
-    required: true,
-    ref: 'User'
-  },
   likeCount: {
     type: Number,
     default: 0
@@ -27,6 +22,11 @@ const PaletteSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  workspace_id: {
+    type: ObjectId,
+    required: true,
+    ref: 'WorkSpace'
   }
 })
 

@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose';
 
 const ColorSchema = new Schema({
   red: {
@@ -22,8 +22,7 @@ const ColorSchema = new Schema({
     default: 0
   },
   name: {
-    type: String,
-    required: true
+    type: String
   },
   createdAt: {
     type: Date,
