@@ -1,6 +1,6 @@
-const Gradient = require('./../models/Gradient')
+import Gradient from './../models/Gradient'
 
-exports.getAll = (req, res, next) => {
+export function getAll(req, res, next) {
   Gradient.find().limit(50)
     .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
@@ -17,7 +17,7 @@ exports.getAll = (req, res, next) => {
     })
 }
 
-exports.get = (req, res, next) => {
+export function get(req, res, next) {
   const id = req.params.GradientId
   Gradient.findById(id)
     .populate('stops.color', 'red blue green alpha name')
@@ -41,7 +41,7 @@ exports.get = (req, res, next) => {
     })
 }
 
-exports.post = (req, res, next) => {
+export function post(req, res, next) {
   const Gradient = new Gradient({
     user_id: req.body.user_id,
     stops: req.body.stops,
@@ -60,7 +60,7 @@ exports.post = (req, res, next) => {
     })
 }
 
-exports.patch = (req, res, next) => {
+export function patch(req, res, next) {
   const id = req.params.GradientId
   const updateOps = {}
   for (const ops of req.body) {
@@ -83,7 +83,7 @@ exports.patch = (req, res, next) => {
     })
 }
 
-exports.delete = (req, res, next) => {
+export function remove(req, res, next) {
   const id = req.params.GradientsId
   Gradient.remove({
     _id: id

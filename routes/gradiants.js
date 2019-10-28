@@ -10,6 +10,6 @@ router.post('/', GradiantControlleur.post)
 
 router.patch('/:gradiantId', GradiantControlleur.patch)
 
-router.delete('/:gradiantsId', GradiantControlleur.delete)
+router.delete('/:gradiantsId', GradiantControlleur.remove)
 
 module.exports = router

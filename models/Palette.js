@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schema.Types.ObjectId
 
-const PaletteSchema = new mongoose.Schema({
+const PaletteSchema = new Schema({
   user_id: {
     type: ObjectId,
     required: true,
@@ -34,4 +34,4 @@ function arrayLimit (val) {
   return val.length >= 2 && val.length <= 5
 }
 
-module.exports = mongoose.model('Palette', PaletteSchema)
+export default model('Palette', PaletteSchema)

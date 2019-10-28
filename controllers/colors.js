@@ -1,6 +1,6 @@
-const Color = require('./../models/Color')
+import Color from './../models/Color'
 
-exports.getAll = (req, res, next) => {
+export function getAll(req, res, next) {
   Color.find().limit(50).exec()
     .then(docs => {
       console.log(docs)
@@ -20,7 +20,7 @@ exports.getAll = (req, res, next) => {
     })
 }
 
-exports.get = (req, res, next) => {
+export function get(req, res, next) {
   const id = req.params.colorId
   Color.findById(id).exec()
     .then(doc => {
@@ -42,7 +42,7 @@ exports.get = (req, res, next) => {
     })
 }
 
-exports.post = (req, res, next) => {
+export function post (req, res, next) {
   const color = new Color({
     red: req.body.red,
     blue: req.body.blue,
@@ -63,7 +63,7 @@ exports.post = (req, res, next) => {
     })
 }
 
-exports.patch = (req, res, next) => {
+export function patch (req, res, next) {
   const id = req.params.colorId
   const updateOps = {}
   for (const ops of req.body) {
@@ -82,7 +82,7 @@ exports.patch = (req, res, next) => {
     })
 }
 
-exports.delete = (req, res, next) => {
+export function remove (req, res, next) {
   const id = req.params.colorId
   Color.remove({ _id: id }).exec()
     .then(result => {

@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schema.Types.ObjectId
 
-const WorkSpaceSchema = new mongoose.Schema({
+const WorkSpaceSchema = new Schema({
   red: {
     type: Number,
     required: true
@@ -25,4 +25,4 @@ const WorkSpaceSchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('workspace', WorkSpaceSchema)
+export default model('workspace', WorkSpaceSchema)

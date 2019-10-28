@@ -1,9 +1,9 @@
 //import des models
-const Color = require('./Color');
-const Gradiant = require('./Gradient');
-const Palette = require('./Palette');
-const User = require('./User');
-const WorkSpace = require('./WorkSpace');
+import Color from './Color';
+import Gradiant from './Gradient';
+import Palette from './Palette';
+import User from './User';
+import WorkSpace from './WorkSpace';
 const models = {
   Color,
   Gradiant,
@@ -12,4 +12,4 @@ const models = {
   WorkSpace
 };
 
-module.exports = models;
+export default models;

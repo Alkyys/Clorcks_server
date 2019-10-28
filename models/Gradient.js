@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schema.Types.ObjectId
 
-const StopSchema = new mongoose.Schema({
+const StopSchema = new Schema({
   color: {
     type: ObjectId,
     ref: 'Color'
@@ -15,7 +15,7 @@ const StopSchema = new mongoose.Schema({
   }
 }, { _id: false })
 
-const GradiantSchema = new mongoose.Schema({
+const GradiantSchema = new Schema({
   user_id: {
     type: ObjectId,
     required: true,
@@ -40,4 +40,4 @@ function arrayLimit (val) {
   return val.length >= 2 && val.length <= 24
 }
 
-module.exports = mongoose.model('gradiant', GradiantSchema)
+export default model('gradiant', GradiantSchema)

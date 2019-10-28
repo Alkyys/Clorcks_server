@@ -10,6 +10,6 @@ router.post('/', ColorController.post)
 
 router.patch('/:colorId', ColorController.patch)
 
-router.delete('/:colorId', ColorController.delete)
+router.delete('/:colorId', ColorController.remove)
 
 module.exports = router

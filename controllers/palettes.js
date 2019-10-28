@@ -1,6 +1,6 @@
-const Palette = require('./../models/Palette')
+import Palette from './../models/Palette'
 
-exports.getAll = (req, res, next) => {
+export function getAll(req, res, next) {
   Palette.find().limit(50)
     .populate('colors_id')
     .populate('user_id','name')
@@ -17,7 +17,7 @@ exports.getAll = (req, res, next) => {
     })
 }
 
-exports.get = (req, res, next) => {
+export function get(req, res, next) {
   const id = req.params.paletteId
   Palette.findById(id)
     .populate('colors_id')
@@ -41,7 +41,7 @@ exports.get = (req, res, next) => {
     })
 }
 
-exports.post =(req, res, next) => {
+export function post(req, res, next) {
   const palette = new Palette({
     user_id: req.body.user_id,
     label: req.body.label,
@@ -61,7 +61,7 @@ exports.post =(req, res, next) => {
     })
 }
 
-exports.patch = (req, res, next) => {
+export function patch(req, res, next) {
   const id = req.params.paletteId
   const updateOps = {}
   for (const ops of req.body) {
@@ -84,7 +84,7 @@ exports.patch = (req, res, next) => {
     })
 }
 
-exports.delete = (req, res, next) => {
+export function remove(req, res, next) {
   const id = req.params.paletteId
   Palette.remove({
       _id: id

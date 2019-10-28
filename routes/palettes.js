@@ -10,6 +10,6 @@ router.post('/', PaletteController.post)
 
 router.patch('/:paletteId', PaletteController.patch)
 
-router.delete('/:paletteId', PaletteController.delete)
+router.delete('/:paletteId', PaletteController.remove)
 
 module.exports = router
