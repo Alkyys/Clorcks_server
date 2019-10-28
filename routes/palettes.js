@@ -1,15 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const PaletteController = require('./../controllers/palettes')
+import { Router } from 'express'
+import { getAll, get, post, patch, remove } from './../controllers/palettes'
 
-router.get('/', PaletteController.getAll)
+const router = Router()
 
-router.get('/:paletteId', PaletteController.get)
+router.get('/', getAll)
 
-router.post('/', PaletteController.post)
+router.get('/:paletteId', get)
 
-router.patch('/:paletteId', PaletteController.patch)
+router.post('/', post)
 
-router.delete('/:paletteId', PaletteController.remove)
+router.patch('/:paletteId', patch)
 
-module.exports = router
+router.delete('/:paletteId', remove)
+
+export default router

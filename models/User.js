@@ -1,5 +1,7 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose'
+
 const ObjectId = Schema.Types.ObjectId
+
 const UserSchema = new Schema({
   name: {
     type: String,

@@ -1,4 +1,4 @@
-import GoTrue from 'gotrue-js';
+import GoTrue from 'gotrue-js'
 
 let auth = new GoTrue({
   APIUrl: process.env.APIUrl,

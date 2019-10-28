@@ -1,26 +1,28 @@
-const express = require('express')
-const morgan = require('morgan')
+import express, { urlencoded, json } from 'express';
+import morgan from 'morgan';
+import { connect, set } from 'mongoose';
+import dotenv from 'dotenv'
+
 const app = express();
-const mongoose = require('mongoose')
 
 // variables d'environements
-require('dotenv').config()
+dotenv.config()
 
 app.use(morgan('dev'))
 
 // connection a la BD
-mongoose.connect(process.env.DATABASE_URL, {
+connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, (err) => {
   if (err) return console.log(err)
 })
- mongoose.set('useCreateIndex', true)
+ set('useCreateIndex', true)
 
-app.use(express.urlencoded({
+app.use(urlencoded({
   extended: false
 }));
-app.use(express.json());
+app.use(json());
 
 //gestion de cors errors  
 // TODO: restreindre les droits cors
@@ -35,10 +37,10 @@ app.use((req, res, next) => {
 })
 
 // my routes
-const colorsRoutes = require('./routes/colors')
-const palettesRoutes = require('./routes/palettes')
-const gradiantsRoutes = require('./routes/gradiants')
-const usersRoutes = require('./routes/users')
+import colorsRoutes from './routes/colors';
+import palettesRoutes from './routes/palettes';
+import gradiantsRoutes from './routes/gradiants';
+import usersRoutes from './routes/users';
 app.use('/colors', colorsRoutes)
 app.use('/palettes', palettesRoutes)
 app.use('/gradiants', gradiantsRoutes)
@@ -59,4 +61,4 @@ app.use((error, req, res, next) => {
   })
 })
 
-module.exports = app
+export default app

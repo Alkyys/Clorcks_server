@@ -1,15 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const GradiantControlleur = require('./../controllers/gradiants')
+import { Router } from 'express'
+import { getAll, get, post, patch, remove } from './../controllers/gradiants'
 
-router.get('/', GradiantControlleur.getAll)
+const router = Router()
 
-router.get('/:gradiantId', GradiantControlleur.get)
+router.get('/', getAll)
 
-router.post('/', GradiantControlleur.post)
+router.get('/:gradiantId', get)
 
-router.patch('/:gradiantId', GradiantControlleur.patch)
+router.post('/', post)
 
-router.delete('/:gradiantsId', GradiantControlleur.remove)
+router.patch('/:gradiantId', patch)
 
-module.exports = router
+router.delete('/:gradiantsId', remove)
+
+export default router

@@ -1,9 +1,9 @@
-//import des models
-import Color from './Color';
-import Gradiant from './Gradient';
-import Palette from './Palette';
-import User from './User';
-import WorkSpace from './WorkSpace';
+import Color from './Color'
+import Gradiant from './Gradient'
+import Palette from './Palette'
+import User from './User'
+import WorkSpace from './WorkSpace'
+
 const models = {
   Color,
   Gradiant,
@@ -12,4 +12,4 @@ const models = {
   WorkSpace
 };
 
-export default models;
+export default models

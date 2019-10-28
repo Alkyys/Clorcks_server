@@ -1,15 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const ColorController = require('./../controllers/colors')
+import { Router } from 'express'
+import { getAll, get, post, patch, remove } from './../controllers/colors'
 
-router.get('/', ColorController.getAll)
+const router = Router()
 
-router.get('/:colorId', ColorController.get)
+router.get('/', getAll)
 
-router.post('/', ColorController.post)
+router.get('/:colorId', get)
 
-router.patch('/:colorId', ColorController.patch)
+router.post('/', post)
 
-router.delete('/:colorId', ColorController.remove)
+router.patch('/:colorId', patch)
 
-module.exports = router
+router.delete('/:colorId', remove)
+
+export default router
