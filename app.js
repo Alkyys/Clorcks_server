@@ -3,9 +3,6 @@ import morgan from 'morgan';
 import { connect, set } from 'mongoose';
 import dotenv from 'dotenv'
 
-import config from './config'
-import router from './router'
-
 const app = express();
 
 // variables d'environements
@@ -39,8 +36,6 @@ app.use((req, res, next) => {
   next()
 })
 
-// Mount API routes
-app.use(config.apiPrefix, router)
 
 //middleware qui gere les requetes innexistante
 app.use((req, res, next) => {
