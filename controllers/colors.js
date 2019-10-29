@@ -3,8 +3,7 @@ import Color from './../models/Color'
 export function getAll(req, res, next) {
   Color.find().limit(50).exec()
     .then(docs => {
-      console.log(docs)
-      if (docs.lenght >= 0) {
+      if (docs.length >= 0) {
       res.status(200).json(docs)
       } else {
           res.status(404).json({
