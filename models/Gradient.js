@@ -23,7 +23,7 @@ const GradiantSchema = new Schema({
   workspace_id: {
     type: ObjectId,
     required: true,
-    ref: 'WorkSpace'
+    ref: 'Workspace'
   },
   label: {
     type: String
@@ -40,4 +40,4 @@ function arrayLimit (val) {
   return val.length >= 2 && val.length <= 24
 }
 
-export default model('gradiant', GradiantSchema)
+export default model('Gradient', GradiantSchema)

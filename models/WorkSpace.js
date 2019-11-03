@@ -5,9 +5,15 @@ const ObjectId = Schema.Types.ObjectId
 const WorkSpaceSchema = new Schema({
   colors_id: {
     type: [ObjectId],
-    default: undefined,
-    ref: 'Colors',
-    required: true
+    ref: 'Colors'
+  },
+  palettes_id: {
+    type: [ObjectId],
+    ref: 'Palette'
+  },
+  gradients_id: {
+    type: [ObjectId],
+    ref: 'Gradient'
   },
   user_id: {
     type: ObjectId,
@@ -16,30 +22,24 @@ const WorkSpaceSchema = new Schema({
   },
   colorsLike_id: {
     type: [ObjectId],
-    default: undefined,
-    ref: 'Colors',
-    required: true
+    ref: 'Colors'
   },
   palettesLike_id: {
     type: [ObjectId],
-    default: undefined,
-    ref: 'Palette',
-    required: true
+    ref: 'Palette'
   },
   gradientsLike_id: {
     type: [ObjectId],
-    default: undefined,
-    ref: 'Gradiant',
-    required: true
+    ref: 'Gradiant'
   },
   createdAt: {
     type: Date,
     default: Date.now
   },
-  name:{
+  name: {
     type: String,
     required: true
   }
 })
 
-export default model('workspace', WorkSpaceSchema)
+export default model('Workspace', WorkSpaceSchema)

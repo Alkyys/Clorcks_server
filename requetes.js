@@ -61,7 +61,7 @@
 ]
 
 /**
- *Gradiant
+ *Gradient
  **/
 
 //post

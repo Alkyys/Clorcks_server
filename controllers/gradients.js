@@ -1,9 +1,10 @@
-import Gradient from './../models/Gradient'
+import Gradient from '../models/Gradient'
 
 export function getAll(req, res, next) {
   Gradient.find().limit(50)
     .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
+    .populate('workspace_id', 'name')
     .exec()
     .then(docs => {
       console.log(docs)
@@ -18,10 +19,11 @@ export function getAll(req, res, next) {
 }
 
 export function get(req, res, next) {
-  const id = req.params.GradientId
+  const id = req.params.gradientId
   Gradient.findById(id)
     .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
+    .populate('workspace_id', 'name')
     .exec()
     .then(doc => {
       console.log(doc)
@@ -42,12 +44,13 @@ export function get(req, res, next) {
 }
 
 export function post(req, res, next) {
-  const Gradient = new Gradient({
+  const gradient = new Gradient({
     user_id: req.body.user_id,
     stops: req.body.stops,
     label: req.body.label,
+    workspace_id: req.body.workspace_id
   })
-  Gradient.save().then(result => {
+  gradient.save().then(result => {
     res.status(201).json({
       result
     })
@@ -61,7 +64,7 @@ export function post(req, res, next) {
 }
 
 export function patch(req, res, next) {
-  const id = req.params.GradientId
+  const id = req.params.gradientId
   const updateOps = {}
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
@@ -84,7 +87,7 @@ export function patch(req, res, next) {
 }
 
 export function remove(req, res, next) {
-  const id = req.params.GradientsId
+  const id = req.params.gradientsId
   Gradient.remove({
     _id: id
   }).exec()

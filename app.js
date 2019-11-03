@@ -36,6 +36,16 @@ app.use((req, res, next) => {
   next()
 })
 
+import colorRoutes from './routes/colors';
+import paletteRoutes from './routes/palettes';
+import gradientRoutes from './routes/gradients';
+import usersRoutes from './routes/users';
+import workspacesRoutes from './routes/workspaces';
+app.use('/color', colorRoutes)
+app.use('/palette', paletteRoutes)
+app.use('/gradient', gradientRoutes)
+app.use('/user', usersRoutes)
+app.use('/workspace', workspacesRoutes)
 
 //middleware qui gere les requetes innexistante
 app.use((req, res, next) => {

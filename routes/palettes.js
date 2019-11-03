@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { getAll, get, post, patch, remove } from './../controllers/palettes'
+import auth from './../middleware/auth'
 
 const router = Router()
 
@@ -7,10 +8,10 @@ router.get('/', getAll)
 
 router.get('/:paletteId', get)
 
-router.post('/', post)
+router.post('/',auth, post)
 
-router.patch('/:paletteId', patch)
+router.patch('/:paletteId',auth, patch)
 
-router.delete('/:paletteId', remove)
+router.delete('/:paletteId',auth, remove)
 
 export default router
