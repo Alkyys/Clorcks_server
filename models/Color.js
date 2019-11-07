@@ -5,19 +5,19 @@ const ColorSchema = new Schema({
     type: Number,
     required: true,
     min: 0,
-    max: 100
+    max: 255
   },
   blue: {
     type: Number,
     required: true,
     min: 0,
-    max: 100
+    max: 255
   },
   green: {
     type: Number,
     required: true,
     min: 0,
-    max: 100
+    max: 255
   },
   alpha: {
     type: Number,
