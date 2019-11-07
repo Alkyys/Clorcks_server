@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec babel-node server.js",
-    "clean": "rm -rf node_modules"
+    "clean": "rm -rf node_modules",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "author": "Alkyys",
   "license": "ISC",
@@ -22,6 +24,10 @@
     "@babel/node": "^7.6.3",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.6.3",
-    "nodemon": "^1.19.3"
+    "nodemon": "^1.19.3",
+    "@vuepress/core": "1.0.2",
+    "vuepress": "1.0.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
