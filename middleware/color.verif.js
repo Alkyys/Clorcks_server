@@ -1,0 +1,1 @@
+import {checkBody} from 'express-validator'
