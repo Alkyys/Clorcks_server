@@ -17,3 +17,5 @@ const NAME_REGEX = /^([A-Za-z0-9 '-]{3,25})$/;
 // FALSE be
 // TRUE Bleu Nuit
 // TRUE Je ne sais pas quoi mettre
+
+const OBJECTID_REGEX = /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i;
