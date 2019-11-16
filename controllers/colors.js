@@ -1,14 +1,14 @@
 import Color from './../models/Color'
 
-export function getAll(req, res, next) {
+export function getAll (req, res, next) {
   Color.find().limit(50).exec()
     .then(docs => {
       if (docs.length >= 0) {
-      res.status(200).json(docs)
+        res.status(200).json(docs)
       } else {
-          res.status(404).json({
-            message: 'Nous avons rien trouver ... '
-          })
+        res.status(404).json({
+          message: 'Nous avons rien trouver ... '
+        })
       }
     })
     .catch(err => {
@@ -19,7 +19,7 @@ export function getAll(req, res, next) {
     })
 }
 
-export function get(req, res, next) {
+export function get (req, res, next) {
   const id = req.params.colorId
   Color.findById(id).exec()
     .then(doc => {
@@ -42,6 +42,10 @@ export function get(req, res, next) {
 }
 
 export function post (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   const color = new Color({
     red: req.body.red,
     blue: req.body.blue,
