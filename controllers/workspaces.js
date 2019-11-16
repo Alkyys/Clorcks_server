@@ -1,10 +1,12 @@
-import Palette from './../models/Palette'
+import Workspace from './../models/WorkSpace'
 
 export function getAll(req, res, next) {
-  Palette.find().limit(50)
+  Workspace.find().limit(50)
     .populate('colors_id')
     .populate('user_id','name')
-    .populate('workspace_id', 'name')
+    .populate('colorsLike_id')
+    .populate('palettesLike_id')
+    .populate('gradientsLike_id')
     .exec()
     .then(docs => {
       console.log(docs)
@@ -20,10 +22,12 @@ export function getAll(req, res, next) {
 
 export function get(req, res, next) {
   const id = req.params.paletteId
-  Palette.findById(id)
+  Workspace.findById(id)
     .populate('colors_id')
     .populate('user_id','name')
-    .populate('workspace_id', 'name')
+    .populate('colorsLike_id')
+    .populate('palettesLike_id')
+    .populate('gradientsLike_id')
     .exec()
     .then(doc => {
       console.log(doc)
@@ -31,7 +35,7 @@ export function get(req, res, next) {
         res.status(200).json(doc)
       } else {
         res.status(404).json({
-          message: 'Nous avons rien trouver ... '
+          message: `Nous n'avons rien trouve ... `
         })
       }
     })
@@ -44,14 +48,12 @@ export function get(req, res, next) {
 }
 
 export function post(req, res, next) {
-  const palette = new Palette({
+  const workspace = new Workspace({
     user_id: req.body.user_id,
-    label: req.body.label,
-    colors_id: req.body.colors_id,
-    workspace_id:req.body.workspace_id
+    name: req.body.name
   })
-  console.log(palette)
-  palette.save().then(result => {
+  console.log(workspace)
+  workspace.save().then(result => {
       res.status(201).json({
         result
       })
@@ -70,7 +72,7 @@ export function patch(req, res, next) {
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
   }
-  Palette.updateOne({
+  Workspace.updateOne({
       _id: id
     }, {
       $set: updateOps
@@ -89,7 +91,7 @@ export function patch(req, res, next) {
 
 export function remove(req, res, next) {
   const id = req.params.paletteId
-  Palette.remove({
+  Workspace.remove({
       _id: id
     }).exec()
     .then(result => {

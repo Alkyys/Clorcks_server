@@ -26,7 +26,7 @@ const PaletteSchema = new Schema({
   workspace_id: {
     type: ObjectId,
     required: true,
-    ref: 'WorkSpace'
+    ref: 'Workspace'
   }
 })
 

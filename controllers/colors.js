@@ -46,8 +46,7 @@ export function post (req, res, next) {
     red: req.body.red,
     blue: req.body.blue,
     green: req.body.green,
-    alpha: req.body.alpha,
-    name: req.body.name
+    alpha: req.body.alpha
   })
   color.save().then(result => {
     res.status(201).json({
