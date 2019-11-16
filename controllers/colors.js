@@ -1,4 +1,5 @@
 import Color from './../models/Color'
+import {validationResult} from 'express-validator'
 
 export function getAll (req, res, next) {
   Color.find().limit(50).exec()

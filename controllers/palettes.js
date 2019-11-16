@@ -1,4 +1,5 @@
 import Palette from './../models/Palette'
+import {validationResult} from 'express-validator'
 
 export function getAll(req, res, next) {
   Palette.find().limit(50)
@@ -44,6 +45,10 @@ export function get(req, res, next) {
 }
 
 export function post(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   const palette = new Palette({
     user_id: req.body.user_id,
     label: req.body.label,

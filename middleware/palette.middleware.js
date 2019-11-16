@@ -7,8 +7,8 @@ export const validation = [
     .matches(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)$/).withMessage(`ObjectId invalide`),
   check('color_id')
     .isEmpty().withMessage(`color_id manquant`)
-    .matches(/^\[("([a-f\d]{24})"(|,)){2,5}\]$/).withMessage(`couleur bleu invalide`),
+    .matches(/^\[("([a-f\d]{24})"(|,)){2,5}\]$/).withMessage(`couleur invalide`),
   check('label')
     .isEmpty().withMessage(`label manquant`)
-    .matches(/^([A-Za-z0-9 '-]{3,25})$/).withMessage(`couleur alpha invalide`)
+    .matches(/^([A-Za-z0-9 '-]{3,25})$/).withMessage(`label invalide`)
 ]

@@ -1,4 +1,5 @@
 import Gradient from '../models/Gradient'
+import {validationResult} from 'express-validator'
 
 export function getAll(req, res, next) {
   Gradient.find().limit(50)
@@ -44,6 +45,10 @@ export function get(req, res, next) {
 }
 
 export function post(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   const gradient = new Gradient({
     user_id: req.body.user_id,
     stops: req.body.stops,

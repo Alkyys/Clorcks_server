@@ -1,4 +1,5 @@
 import Workspace from './../models/WorkSpace'
+import {validationResult} from 'express-validator'
 
 export function getAll(req, res, next) {
   Workspace.find().limit(50)
@@ -48,6 +49,10 @@ export function get(req, res, next) {
 }
 
 export function post(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   const workspace = new Workspace({
     user_id: req.body.user_id,
     name: req.body.name
