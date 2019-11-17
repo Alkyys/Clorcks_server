@@ -61,7 +61,7 @@ export function signup (req, res, next) {
               .then(result => {
 
                 const workspace = new Workspace({
-                  user_id: result.user_id, // TODO: rajouter user_id dans le modele !!
+                  user_id: result._id, 
                   name: "main"
                 })
                 try {
