@@ -42,4 +42,10 @@ const WorkSpaceSchema = new Schema({
   }
 })
 
+// methode de verification user_id
+WorkSpaceSchema.methods.isOwnwer = function ({ _id: userId }) {
+  return this._id === userId
+}
+
+
 export default model('Workspace', WorkSpaceSchema)

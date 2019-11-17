@@ -35,9 +35,14 @@ const GradiantSchema = new Schema({
   }],
 })
 
-
 function arrayLimit (val) {
   return val.length >= 2 && val.length <= 24
 }
+
+// methode de verification user_id
+GradiantSchema.methods.isOwnwer = function ({ _id: userId }) {
+  return this._id === userId
+}
+
 
 export default model('Gradient', GradiantSchema)

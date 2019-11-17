@@ -34,4 +34,9 @@ function arrayLimit (val) {
   return val.length >= 2 && val.length <= 5
 }
 
+// methode de verification user_id
+PaletteSchema.methods.isOwnwer = function ({ _id: userId }) {
+  return this._id === userId
+}
+
 export default model('Palette', PaletteSchema)
