@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { getAll, get, post, patch, remove } from './../controllers/colors'
 import auth from './../middleware/auth'
-import { validation } from './../middleware/color.middleware'
+import { validation } from './../middleware/color.check'
 
 const router = Router()
 

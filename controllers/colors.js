@@ -67,6 +67,8 @@ export function post (req, res, next) {
 }
 
 export function patch (req, res, next) {
+
+  
   const id = req.params.colorId
   const updateOps = {}
   for (const ops of req.body) {
