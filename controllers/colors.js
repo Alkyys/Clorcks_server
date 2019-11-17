@@ -1,5 +1,5 @@
 import Color from './../models/Color'
-import {validationResult} from 'express-validator'
+import { validationResult } from 'express-validator'
 
 export function getAll (req, res, next) {
   Color.find().limit(50).exec()
@@ -67,9 +67,24 @@ export function post (req, res, next) {
 }
 
 export function patch (req, res, next) {
+  const id = req.params.colorId // on prend notre color_id dans uri
 
-  
-  const id = req.params.colorId
+    Color.findById(id).exec() // on va chercher le user_id de la couleur
+    .then((result) => {
+      if (!(result.user_id === req.userData)) { // on compare les deux
+        res.status(401).json({
+          err:"cette resource ne vous appartient pas"
+        })
+      }
+      // TODO: demander a sacha si il manque pas quelque chose
+    }).catch((err) => {
+      res.status(404).json({ // la resource n'existe pas
+        error: err
+      })
+    });
+ 
+
+
   const updateOps = {}
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
@@ -89,6 +104,22 @@ export function patch (req, res, next) {
 
 export function remove (req, res, next) {
   const id = req.params.colorId
+
+  Color.findById(id).exec() // on va chercher le user_id de la couleur
+  .then((result) => {
+    if (!(result.user_id === req.userData)) { // on compare les deux
+      res.status(401).json({
+        err:"cette resource ne vous appartient pas"
+      })
+    }
+    // TODO: demander a sacha si il manque pas quelque chose
+  }).catch((err) => {
+    res.status(404).json({ // la resource n'existe pas
+      error: err
+    })
+  });
+
+
   Color.remove({ _id: id }).exec()
     .then(result => {
       res.status(200).json(result)
