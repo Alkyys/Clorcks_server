@@ -1,6 +1,7 @@
 import User from './../models/User'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import Workspace from './../models/WorkSpace'
 
 export function getAll (req, res, next) {
   User.find().limit(200).exec()
@@ -58,6 +59,19 @@ export function signup (req, res, next) {
             })
             user.save()
               .then(result => {
+
+                const workspace = new Workspace({
+                  user_id: result.user_id, // TODO: rajouter user_id dans le modele !!
+                  name: "main"
+                })
+                try {
+                  workspace.save() // on cree le premier workspace de user
+                } catch (err) {
+                   res.status(500).json({
+                      error: err
+                    })
+                }
+
                 res.status(201).json({
                   result
                 })
