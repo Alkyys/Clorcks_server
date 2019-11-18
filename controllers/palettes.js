@@ -70,7 +70,24 @@ export function post(req, res) {
 }
 
 export function patch(req, res) {
+ // on prend notre palette_id dans uri
   const id = req.params.paletteId
+
+  const palette = await Palette.findById(id) // verif si la res existe 
+
+  if (palette === {}) { // on verif si on a recu quelque chose
+    return res.status(404).json({
+      err:"ressource indisponible"
+    })
+  }
+
+  Object.assign(palette, req.body)
+
+  // Si le palette n'a pas été modifié, la renvoyer
+  if (!palette.isModified()) {
+    return res.status(203).json(palette)
+  }
+
   const updateOps = {}
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
