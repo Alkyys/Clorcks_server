@@ -68,8 +68,24 @@ export function post(req, res, next) {
     })
 }
 
-export function patch(req, res, next) {
-  const id = req.params.gradientId
+export async function patch(req, res, next) {
+  const id = req.params.gradientId // on prend notre gradient_id dans uri
+
+  const gradient = await Gradient.findById(id) // verif si la res existe 
+
+  if (gradient === {}) { // on verif si on a recu quelque chose
+    return res.status(404).json({
+      err:"ressource indisponible"
+    })
+  }
+
+  Object.assign(gradient, req.body)
+
+  // Si le degrader n'a pas été modifié, le renvoyer
+  if (!gradient.isModified()) {
+    return res.status(203).json(gradient)
+  }
+
   const updateOps = {}
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
@@ -84,7 +100,6 @@ export function patch(req, res, next) {
       res.status(200).json(result)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })

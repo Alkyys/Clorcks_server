@@ -53,27 +53,52 @@ export function post (req, res, next) {
     green: req.body.green,
     alpha: req.body.alpha
   })
-  color.save().then(result => {
-    res.status(201).json({
-      result
+  color.save()
+    .then(result => {
+      res.status(201).json({
+        result
+      })
     })
-  })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
     })
 }
 
-export function patch (req, res, next) {
+export async function patch (req, res, next) {
   const id = req.params.colorId // on prend notre color_id dans uri
 
-    Color.findById(id).exec() // on va chercher le user_id de la couleur
+  const color = await Color.findById(id)
+
+  Object.assign(color, req.body)
+
+  // Si la couleur n'a pas été modifié, la renvoyer
+  if (!color.isModified()) {
+    return res.status(203).json(color)
+  }
+
+  // Cherche si les nouvelles valeurs correspondent déjà à une couleur existante
+  const { red, blue, green, alpha } = color
+  const search = await Color.findOne({ red, blue, green, alpha })
+  if (search) {
+    // Renvoi la couleur qui existe déjà
+    return res.status(201).json(search)
+  }
+
+  // Créer la couleur et la renvoi
+  const newColor = await Color.create({ red, blue, green, alpha })
+  return res.status(201).json(newColor)
+}
+
+export function remove (req, res, next) {
+  const id = req.params.colorId
+
+  Color.findById(id).exec() // on va chercher le user_id de la couleur
     .then((result) => {
       if (!(result.user_id === req.userData)) { // on compare les deux
         res.status(401).json({
-          err:"cette resource ne vous appartient pas"
+          err: "cette resource ne vous appartient pas"
         })
       }
       // TODO: demander a sacha si il manque pas quelque chose
@@ -82,42 +107,6 @@ export function patch (req, res, next) {
         error: err
       })
     });
- 
-
-
-  const updateOps = {}
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value
-  }
-  Color.updateOne({ _id: id }, { $set: updateOps })
-    .exec()
-    .then(result => {
-      res.status(200).json(result)
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
-}
-
-export function remove (req, res, next) {
-  const id = req.params.colorId
-
-  Color.findById(id).exec() // on va chercher le user_id de la couleur
-  .then((result) => {
-    if (!(result.user_id === req.userData)) { // on compare les deux
-      res.status(401).json({
-        err:"cette resource ne vous appartient pas"
-      })
-    }
-    // TODO: demander a sacha si il manque pas quelque chose
-  }).catch((err) => {
-    res.status(404).json({ // la resource n'existe pas
-      error: err
-    })
-  });
 
 
   Color.remove({ _id: id }).exec()
