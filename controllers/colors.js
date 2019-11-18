@@ -1,7 +1,7 @@
 import Color from './../models/Color'
 import { validationResult } from 'express-validator'
 
-export function getAll (req, res, next) {
+export function getAll (req, res) {
   Color.find().limit(50).exec()
     .then(docs => {
       if (docs.length >= 0) {
@@ -20,7 +20,7 @@ export function getAll (req, res, next) {
     })
 }
 
-export function get (req, res, next) {
+export function get (req, res) {
   const id = req.params.colorId
   Color.findById(id).exec()
     .then(doc => {
@@ -42,7 +42,7 @@ export function get (req, res, next) {
     })
 }
 
-export function post (req, res, next) {
+export function post (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -66,7 +66,7 @@ export function post (req, res, next) {
     })
 }
 
-export async function patch (req, res, next) {
+export async function patch (req, res) {
   const id = req.params.colorId // on prend notre color_id dans uri
 
   const color = await Color.findById(id)
@@ -91,7 +91,7 @@ export async function patch (req, res, next) {
   return res.status(201).json(newColor)
 }
 
-export function remove (req, res, next) {
+export function remove (req, res) {
   const id = req.params.colorId
 
   Color.findById(id).exec() // on va chercher le user_id de la couleur

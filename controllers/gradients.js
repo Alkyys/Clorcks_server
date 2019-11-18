@@ -1,7 +1,7 @@
 import Gradient from '../models/Gradient'
 import {validationResult} from 'express-validator'
 
-export function getAll(req, res, next) {
+export function getAll(req, res) {
   Gradient.find().limit(50)
     .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
@@ -19,7 +19,7 @@ export function getAll(req, res, next) {
     })
 }
 
-export function get(req, res, next) {
+export function get(req, res) {
   const id = req.params.gradientId
   Gradient.findById(id)
     .populate('stops.color', 'red blue green alpha name')
@@ -44,7 +44,7 @@ export function get(req, res, next) {
     })
 }
 
-export function post(req, res, next) {
+export function post(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -68,7 +68,7 @@ export function post(req, res, next) {
     })
 }
 
-export async function patch(req, res, next) {
+export async function patch(req, res) {
   const id = req.params.gradientId // on prend notre gradient_id dans uri
 
   const gradient = await Gradient.findById(id) // verif si la res existe 
@@ -106,7 +106,7 @@ export async function patch(req, res, next) {
     })
 }
 
-export function remove(req, res, next) {
+export function remove(req, res) {
   const id = req.params.gradientsId
   Gradient.remove({
     _id: id

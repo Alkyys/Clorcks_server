@@ -1,7 +1,7 @@
 import Workspace from './../models/WorkSpace'
 import {validationResult} from 'express-validator'
 
-export function getAll(req, res, next) {
+export function getAll(req, res) {
   Workspace.find().limit(50)
     .populate('colors_id')
     .populate('user_id','name')
@@ -21,7 +21,7 @@ export function getAll(req, res, next) {
     })
 }
 
-export function get(req, res, next) {
+export function get(req, res) {
   const id = req.params.paletteId
   Workspace.findById(id)
     .populate('colors_id')
@@ -48,7 +48,7 @@ export function get(req, res, next) {
     })
 }
 
-export function post(req, res, next) {
+export function post(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -71,7 +71,7 @@ export function post(req, res, next) {
     })
 }
 
-export function patch(req, res, next) {
+export function patch(req, res) {
   const id = req.params.paletteId
   const updateOps = {}
   for (const ops of req.body) {
@@ -94,7 +94,7 @@ export function patch(req, res, next) {
     })
 }
 
-export function remove(req, res, next) {
+export function remove(req, res) {
   const id = req.params.paletteId
   Workspace.remove({
       _id: id

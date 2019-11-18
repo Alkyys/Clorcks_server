@@ -2,7 +2,7 @@ import User from './../models/User'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-export function getAll (req, res, next) {
+export function getAll (req, res) {
   User.find().limit(200).exec()
     .then(docs => {
       console.log(docs)
@@ -16,7 +16,7 @@ export function getAll (req, res, next) {
     })
 }
 
-export function get (req, res, next) {
+export function get (req, res) {
   const id = req.params.usersId
   User.findById(id).exec()
     .then(doc => {
@@ -37,7 +37,7 @@ export function get (req, res, next) {
     })
 }
 
-export function signup (req, res, next) {
+export function signup (req, res) {
   User.find({ email: req.body.email }).exec()
     .then(user => {
       if (user.length >= 1) {
@@ -74,7 +74,7 @@ export function signup (req, res, next) {
 
 }
 
-export function login (req, res, next) {
+export function login (req, res) {
   User.find({ email: req.body.email })
     .exec()
     .then(user => {
@@ -111,7 +111,7 @@ export function login (req, res, next) {
     })
 }
 
-export function patch (req, res, next) {
+export function patch (req, res) {
   const id = req.params.userId
   const updateOps = {}
   for (const ops of req.body) {
@@ -134,7 +134,7 @@ export function patch (req, res, next) {
     })
 }
 
-export function del (req, res, next) {
+export function del (req, res) {
   const id = req.params.usersId
   User.remove({
     _id: id
