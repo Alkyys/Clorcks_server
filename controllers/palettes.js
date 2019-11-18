@@ -70,6 +70,11 @@ export function post(req, res) {
 }
 
 export function patch(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
  // on prend notre palette_id dans uri
   const id = req.params.paletteId
 

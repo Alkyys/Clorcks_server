@@ -67,6 +67,11 @@ export function post (req, res) {
 }
 
 export async function patch (req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   const id = req.params.colorId // on prend notre color_id dans uri
 
   const color = await Color.findById(id)

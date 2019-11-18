@@ -72,6 +72,11 @@ export function post(req, res) {
 }
 
 export function patch(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   const id = req.params.paletteId
   const updateOps = {}
   for (const ops of req.body) {
