@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "description": "api clorcks",
   "main": "index.js",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node server.js",
-    "clean": "rm -rf node_modules"
+    "dev": "nodemon --exec babel-node server.js",
+    "clean": "rm -rf build && mkdir build",
+    "cleanall": "rm -rf node_modules && rm -rf build",
+    "build-babel": "babel -d ./build ./server.js -s",
+    "build": "npm run clean && npm run build-babel ",
+    "start": "npm run build && node ./build/index.js"
   },
   "author": "Alkyys",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^8.1.0",
+    "babel-cli": "^6.26.0",
     "express": "^4.17.1",
     "express-validator": "^6.2.0",
     "jsonwebtoken": "^8.5.1",
@@ -19,6 +26,7 @@
     "morgan": "^1.9.1"
   },
   "devDependencies": {
+    "dotenv": "^8.1.0",
     "@babel/core": "^7.6.4",
     "@babel/node": "^7.6.3",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
