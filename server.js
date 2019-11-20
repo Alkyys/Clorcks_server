@@ -1,4 +1,5 @@
 import app from './app.js';
+import webpack from 'webpack';
 
 const port = process.env.NODE_ENV === "production" ?
   process.env.PORT || 80 :

@@ -41,18 +41,14 @@ export function get (req, res) {
 export function signup (req, res) {
   User.findOne({ email: req.body.email }).exec()
     .then(user => {
-      console.log("TCL: signup -> user", user)
       if (user) { // on regardde si on a recu quelque chose
         return res.status(409).json({
           message: "mail existant"
         })
       } else {
         let cipher = crypto.createCipheriv('aes-256-cbc', process.env.KEY_CRYPTO, process.env.IV);
-        console.log("TCL: signup -> cipher", cipher)
-
         let encrypted = cipher.update(req.body.password, 'utf-8', 'hex');
         encrypted += cipher.final('hex');
-        console.log("TCL: signup -> encrypted", encrypted)
 
         const user = new User({
           name: req.body.name,
