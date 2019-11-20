@@ -11,9 +11,10 @@
     "dev": "nodemon --exec babel-node server.js",
     "clean": "rm -rf build && mkdir build",
     "cleanall": "rm -rf node_modules && rm -rf build",
-    "build-babel": "babel -d ./build ./server.js -s",
+    "build-babel": "babel -d ./build ./server.js -s --minified",
+    "newBabel": "babel-cli server.js -d dist",
     "build": "npm run clean && npm run build-babel ",
-    "start": "npm run build && node ./build/index.js"
+    "start": "npm run build && node ./build/server.js"
   },
   "author": "Alkyys",
   "license": "ISC",
