@@ -57,14 +57,12 @@ export function post(req, res) {
     user_id: req.body.user_id,
     name: req.body.name
   })
-  console.log(workspace)
   workspace.save().then(result => {
       res.status(201).json({
         result
       })
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })

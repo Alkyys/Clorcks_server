@@ -1,6 +1,7 @@
 import User from './../models/User'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
+import Workspace from './../models/WorkSpace'
 
 export function getAll (req, res) {
   User.find().limit(200).exec()
@@ -59,20 +60,27 @@ export function signup (req, res) {
           password: encrypted
         })
         user.save()
-          .then(result => {
-            res.status(201).json({
-              result
-            })
+        .then(result => {
+          const workspace = new Workspace({
+            user_id: result._id, 
+            name: "main"
           })
-          .catch(err => {
-            res.status(500).json({
-              error: err
-            })
+          try {
+            workspace.save() // on cree le premier workspace de user
+          } catch (err) {
+             res.status(500).json({
+                error: err
+              })
+          }
+          res.status(201).json({
+            result
           })
-
-      }
-    })
-
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
+        })
 }
 
 export function login (req, res) {
