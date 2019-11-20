@@ -81,6 +81,8 @@ export function signup (req, res) {
             error: err
           })
         })
+      }
+    })
 }
 
 export function login (req, res) {
