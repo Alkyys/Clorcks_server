@@ -1,1 +1,1 @@
-web: babel ./build ./server.js && node ./build/index.js
+web: babel ./src/build ./src/server.js && node ./src/build/index.js
