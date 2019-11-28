@@ -8,11 +8,9 @@ export function getAll(req, res) {
     .populate('workspace_id', 'name')
     .exec()
     .then(docs => {
-      console.log(docs)
       res.status(200).json(docs)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -27,7 +25,6 @@ export function get(req, res) {
     .populate('workspace_id', 'name')
     .exec()
     .then(doc => {
-      console.log(doc)
       if (doc) {
         res.status(200).json(doc)
       } else {
@@ -37,7 +34,6 @@ export function get(req, res) {
       }
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -55,14 +51,12 @@ export function post(req, res) {
     colors_id: req.body.colors_id,
     workspace_id:req.body.workspace_id
   })
-  console.log(palette)
   palette.save().then(result => {
       res.status(201).json({
         result
       })
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -107,7 +101,6 @@ export async function patch(req, res) {
       res.status(200).json(result)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -123,7 +116,6 @@ export function remove(req, res) {
       res.status(200).json(result)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })

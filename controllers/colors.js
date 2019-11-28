@@ -13,7 +13,6 @@ export function getAll (req, res) {
       }
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -24,7 +23,6 @@ export function get (req, res) {
   const id = req.params.colorId
   Color.findById(id).exec()
     .then(doc => {
-      console.log(doc)
       if (doc) {
         res.status(200).json(doc)
       } else {
@@ -35,7 +33,6 @@ export function get (req, res) {
 
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -119,7 +116,6 @@ export function remove (req, res) {
       res.status(200).json(result)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })

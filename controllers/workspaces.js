@@ -10,11 +10,9 @@ export function getAll(req, res) {
     .populate('gradientsLike_id')
     .exec()
     .then(docs => {
-      console.log(docs)
       res.status(200).json(docs)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -31,7 +29,6 @@ export function get(req, res) {
     .populate('gradientsLike_id')
     .exec()
     .then(doc => {
-      console.log(doc)
       if (doc) {
         res.status(200).json(doc)
       } else {
@@ -41,7 +38,6 @@ export function get(req, res) {
       }
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -90,7 +86,6 @@ export function patch(req, res) {
       res.status(200).json(result)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
@@ -106,7 +101,6 @@ export function remove(req, res) {
       res.status(200).json(result)
     })
     .catch(err => {
-      console.log(err)
       res.status(500).json({
         error: err
       })
