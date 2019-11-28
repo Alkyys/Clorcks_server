@@ -8,13 +8,11 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec babel-node server.js",
-    "clean": "rm -rf build && mkdir build",
-    "cleanall": "rm -rf node_modules && rm -rf build",
-    "build-babel": "babel -d ./build ./server.js -s --minified",
-    "newBabel": "babel-cli server.js -d dist",
-    "build": "npm run clean && npm run build-babel ",
-    "start": "npm run build && node ./build/server.js"
+    "start:dev": "nodemon --exec babel-node server.js",
+    "clean": "rm -rf node_modules",
+    "build": "webpack --config webpack.config.js",
+    "postinstall": "npm run build",
+    "start": "node dist"
   },
   "author": "Alkyys",
   "license": "ISC",
@@ -23,7 +21,8 @@
     "express-validator": "^6.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.4",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.0",
@@ -31,7 +30,9 @@
     "@babel/node": "^7.6.3",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.6.3",
-    "dotenv": "^8.1.0",
-    "nodemon": "^1.19.3"
+    "nodemon": "^1.19.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-node-externals": "^1.7.2"
   }
 }
