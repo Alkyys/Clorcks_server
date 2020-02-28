@@ -49,8 +49,14 @@ export function getMy(req, res) {
   console.log("TCL: getMy -> id", id)
   Workspace.find({"user_id":`${id}`})
     .populate('colors_id')
-    .populate('palettes_id')
-    .populate('gradients_id')
+    .populate({
+      path: 'palettes_id',
+      populate: { path: 'colors_id' }
+    })
+    .populate({
+      path: 'gradients_id',
+      populate: { path: 'stops.color' }
+    })
     .populate('colorsLike_id')
     .populate('palettesLike_id')
     .populate('gradientsLike_id')

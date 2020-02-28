@@ -11,7 +11,6 @@ export function getAll(req, res) {
       res.status(200).json(docs)
     })
     .catch(err => {
-
       res.status(500).json({
         error: err
       })
