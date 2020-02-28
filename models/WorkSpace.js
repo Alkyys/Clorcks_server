@@ -4,16 +4,25 @@ const ObjectId = Schema.Types.ObjectId
 
 const WorkSpaceSchema = new Schema({
   colors_id: {
-    type: [ObjectId],
-    ref: 'Colors'
+    type: [{
+      type: ObjectId,
+      ref: 'Color'
+    }],
+    default: []
   },
   palettes_id: {
-    type: [ObjectId],
-    ref: 'Palette'
+    type: [{
+      type: ObjectId,
+      ref: 'Palette'
+    }],
+    default: []
   },
   gradients_id: {
-    type: [ObjectId],
-    ref: 'Gradient'
+    type: [{
+      type: ObjectId,
+      ref: 'Gradient'
+    }],
+    default: []
   },
   user_id: {
     type: ObjectId,

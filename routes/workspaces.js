@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getAll, get, post, patch, remove } from './../controllers/workspaces'
+import { getAll, get, getMy, post, patch, remove } from './../controllers/workspaces'
 import auth from './../middleware/auth'
 
 const router = Router()
@@ -7,6 +7,8 @@ const router = Router()
 router.get('/', getAll)
 
 router.get('/:workspaceId', get)
+
+router.get('/my/:userId', getMy)
 
 router.post('/',auth, post)
 

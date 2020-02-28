@@ -84,6 +84,7 @@ export function signup (req, res) {
 }
 
 export function login (req, res) {
+
   User.findOne({ email: req.body.email })
     .exec()
     .then(user => {
@@ -92,29 +93,29 @@ export function login (req, res) {
           message: 'Auth failed'
         })
       }
-
+      // decrypt password
       let decipher = crypto.createDecipheriv('aes-256-cbc', process.env.KEY_CRYPTO, process.env.IV);
       let decrypted = decipher.update(user.password, 'hex', 'utf-8');
       decrypted += decipher.final('utf-8');
 
+      // si le mot de passe est bon on cree le token
       if (req.body.password === decrypted) {
-
-        const token = jwt.sign({
+       const token = jwt.sign({
           email: user.email,
           user_id: user._id,
           name: user.name
         }, process.env.JWT_SECRET, {
           expiresIn: "1h"
         })
-
-// TODO: on envoi le workpace de l'utilisateur
-
-        return res.status(200).json({
+        // Auth reussi on envoi le token 
+         res.status(200).json({
           message: "Auth successful",
-          token: token
+          token: token,
+          user_id:user._id
         })
+
       } else {
-        return res.status(401).json({
+         res.status(401).json({
           message: 'Auth failed'
         })
       }

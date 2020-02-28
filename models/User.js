@@ -18,12 +18,6 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true
-  },
-  workspace: {
-    type: [{
-      type: ObjectId
-    }],
-    ref:'Workspace'
   }
 })
 

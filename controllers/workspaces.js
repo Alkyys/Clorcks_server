@@ -20,10 +20,37 @@ export function getAll(req, res) {
 }
 
 export function get(req, res) {
-  const id = req.params.paletteId
+  const id = req.params.workspaceId
   Workspace.findById(id)
     .populate('colors_id')
     .populate('user_id','name')
+    .populate('colorsLike_id')
+    .populate('palettesLike_id')
+    .populate('gradientsLike_id')
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json(doc)
+      } else {
+        res.status(404).json({
+          message: `Nous n'avons rien trouve ... `
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+}
+
+export function getMy(req, res) {
+  const id = req.params.userId
+  console.log("TCL: getMy -> id", id)
+  Workspace.find({"user_id":`${id}`})
+    .populate('colors_id')
+    .populate('palettes_id')
+    .populate('gradients_id')
     .populate('colorsLike_id')
     .populate('palettesLike_id')
     .populate('gradientsLike_id')
