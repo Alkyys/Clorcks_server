@@ -40,7 +40,9 @@ export function get (req, res) {
 }
 
 export function post (req, res) {
+  console.log("post -> req", req.body)
   const errors = validationResult(req);
+  console.log("post -> errors", errors)
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
