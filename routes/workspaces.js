@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getAll, get, getMy, post, patch, remove } from './../controllers/workspaces'
+import { poplateOne, getAll, get, getMy, post, patch, addColor, remove } from './../controllers/workspaces'
 import auth from './../middleware/auth'
 
 const router = Router()
@@ -10,10 +10,12 @@ router.get('/:workspaceId', get)
 
 router.get('/my/:userId', getMy)
 
-router.post('/',auth, post)
+router.post('/', auth, post)
 
-router.patch('/:workspaceId',auth, patch)
+router.patch('/:workspaceId', auth, patch)
 
-router.delete('/:workspaceId',auth, remove)
+router.put('/:workspaceId', auth, poplateOne, addColor)
+
+router.delete('/:workspaceId', auth, remove)
 
 export default router

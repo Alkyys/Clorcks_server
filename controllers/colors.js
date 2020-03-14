@@ -1,22 +1,14 @@
 import Color from './../models/Color'
 import { validationResult } from 'express-validator'
 
-export function getAll (req, res) {
-  Color.find().limit(50).exec()
-    .then(docs => {
-      if (docs.length >= 0) {
-        res.status(200).json(docs)
-      } else {
-        res.status(404).json({
-          message: 'Nous avons rien trouver ... '
-        })
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
+export async function getAll (req, res) {
+  try {
+    const colors = await Color.find()
+    return res.json(colors)
+  } catch (error) {
+    console.log('🐛: getAll -> error', error)
+    return res.sendStatus(500)
+  }
 }
 
 export function get (req, res) {
@@ -40,9 +32,7 @@ export function get (req, res) {
 }
 
 export function post (req, res) {
-  console.log("post -> req", req.body)
   const errors = validationResult(req);
-  console.log("post -> errors", errors)
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
@@ -54,6 +44,7 @@ export function post (req, res) {
   })
   color.save()
     .then(result => {
+      console.log('🐛: creation de couleur -> result', result)
       res.status(201).json({
         result
       })

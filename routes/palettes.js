@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getAll, get, post, patch, remove } from './../controllers/palettes'
+import { getAll, get, getMy, post, patch, remove } from './../controllers/palettes'
 import auth from './../middleware/auth'
 import { validation } from './../middleware/palette.check'
 
@@ -9,10 +9,12 @@ router.get('/', getAll)
 
 router.get('/:paletteId', get)
 
-router.post('/',auth, validation, post)
+router.get('/my/:workspaceId', auth, getMy)
 
-router.patch('/:paletteId',auth, patch)
+router.post('/', auth, validation, post)
 
-router.delete('/:paletteId',auth, remove)
+router.patch('/:paletteId', auth, patch)
+
+router.delete('/:paletteId', auth, remove)
 
 export default router
