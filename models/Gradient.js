@@ -28,6 +28,10 @@ const GradiantSchema = new Schema({
   label: {
     type: String
   },
+  likeCount: {
+    type: Number,
+    default: 0
+  },
   stops: [{
     type: StopSchema,
     required: true,

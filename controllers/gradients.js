@@ -1,8 +1,12 @@
-import Gradient from '../models/Gradient'
-import {validationResult} from 'express-validator'
+import mongoose from 'mongoose'
 
-export function getAll(req, res) {
-  Gradient.find().limit(50)
+import Gradient from '../models/Gradient'
+import Workspace from '../models/WorkSpace'
+import Color from '../models/Color'
+import { validationResult } from 'express-validator'
+
+export function getAll (req, res) {
+  Gradient.find().limit()
     .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
     .populate('workspace_id', 'name')
@@ -17,7 +21,7 @@ export function getAll(req, res) {
     })
 }
 
-export function get(req, res) {
+export function get (req, res) {
   const id = req.params.gradientId
   Gradient.findById(id)
     .populate('stops.color', 'red blue green alpha name')
@@ -40,22 +44,20 @@ export function get(req, res) {
     })
 }
 
-export function post(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
-  const gradient = new Gradient({
-    user_id: req.body.user_id,
-    stops: req.body.stops,
-    label: req.body.label,
-    workspace_id: req.body.workspace_id
-  })
-  gradient.save().then(result => {
-    res.status(201).json({
-      result
+export function getMy (req, res) {
+  const id = req.params.workspaceId
+  Gradient.find({ 'workspace_id': `${id}` })
+    .populate('stops.color', 'red blue green alpha name')
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json(doc)
+      } else {
+        res.status(404).json({
+          message: 'Nous avons rien trouver ... '
+        })
+      }
     })
-  })
     .catch(err => {
       res.status(500).json({
         error: err
@@ -63,7 +65,90 @@ export function post(req, res) {
     })
 }
 
-export async function patch(req, res) {
+export async function post (req, res) {
+  console.log('🐛: post Gradient -> req.body', req.body)
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const workspaceId = req.body.workspace_id
+  if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+    return res.status(400).json({
+      error: 'ObjectId Invalid'
+    })
+  }
+
+  try {
+    // creation de la couleur 1 
+    const color1 = new Color({
+      red: req.body.stops[0].color.red,
+      green: req.body.stops[0].color.green,
+      blue: req.body.stops[0].color.blue,
+      alpha: 1
+    })
+
+    // creation de la couleur 2 
+    const color2 = new Color({
+      red: req.body.stops[1].color.red,
+      green: req.body.stops[1].color.green,
+      blue: req.body.stops[1].color.blue,
+      alpha: 1
+    })
+    // color -> bd
+    const result1 = await color1.save()
+    console.log('🐛: post -> result1', result1)
+    const result2 = await color2.save()
+    console.log('🐛: post -> result2', result2)
+
+    // on cherche et on met on met les couleurs dans le workspace
+    try {
+      const workspace = await Workspace.findOne({
+        _id: workspaceId,
+        user_id: req.userData.user_id
+      })
+      if (!workspace) {
+        return res.sendStatus(404)
+      }
+      workspace.colors_id.push(result1._id, result2._id)
+      await workspace.save()
+    } catch (error) {
+      console.log('🐛: post -> error', error)
+      return res.status(500).json({
+        err: error
+      })
+    }
+
+    // creation du gradinet 
+    const gradient = new Gradient({
+      user_id: req.body.user_id,
+      stops: [
+        {
+          color: result1._id,
+          position: 0
+        }, {
+          color: result2._id,
+          position: 100
+        }
+      ],
+      label: req.body.label,
+      workspace_id: req.body.workspace_id
+    })
+    console.log('🐛: post -> gradient', gradient)
+
+    const result = await gradient.save()
+    console.log('🐛: post -> result', result)
+    res.status(201).json({
+      result
+    })
+  } catch (error) {
+    console.log('🐛: post -> error', error)
+    res.status(500).json({
+      error: error
+    })
+  }
+}
+
+export async function patch (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -75,7 +160,7 @@ export async function patch(req, res) {
 
   if (gradient === {}) { // on verif si on a recu quelque chose
     return res.status(404).json({
-      err:"ressource indisponible"
+      err: "ressource indisponible"
     })
   }
 
@@ -106,7 +191,7 @@ export async function patch(req, res) {
     })
 }
 
-export function remove(req, res) {
+export function remove (req, res) {
   const id = req.params.gradientsId
   Gradient.remove({
     _id: id

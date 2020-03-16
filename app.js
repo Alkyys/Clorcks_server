@@ -17,7 +17,7 @@ connect(process.env.DATABASE_URL, {
 }, (err) => {
   if (err) return console.log(err)
 })
- set('useCreateIndex', true)
+set('useCreateIndex', true)
 
 app.use(urlencoded({
   extended: false
@@ -29,7 +29,7 @@ app.use(json());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
-  if (req.methode === 'OPTIONS') {
+  if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', 'PUT, POST, PATH, DELETE, GET')
     return res.status(200).json({})
   }

@@ -10,20 +10,6 @@ const WorkSpaceSchema = new Schema({
     }],
     default: []
   },
-  palettes_id: {
-    type: [{
-      type: ObjectId,
-      ref: 'Palette'
-    }],
-    default: []
-  },
-  gradients_id: {
-    type: [{
-      type: ObjectId,
-      ref: 'Gradient'
-    }],
-    default: []
-  },
   user_id: {
     type: ObjectId,
     ref: 'User',

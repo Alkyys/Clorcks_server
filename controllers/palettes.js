@@ -1,10 +1,13 @@
-import Palette from './../models/Palette'
-import {validationResult} from 'express-validator'
+import mongoose from 'mongoose'
 
-export function getAll(req, res) {
+import Palette from './../models/Palette'
+import Color from '../models/Color'
+import { validationResult } from 'express-validator'
+
+export function getAll (req, res) {
   Palette.find().limit(50)
     .populate('colors_id')
-    .populate('user_id','name')
+    .populate('user_id', 'name')
     .populate('workspace_id', 'name')
     .exec()
     .then(docs => {
@@ -17,11 +20,11 @@ export function getAll(req, res) {
     })
 }
 
-export function get(req, res) {
+export function get (req, res) {
   const id = req.params.paletteId
   Palette.findById(id)
     .populate('colors_id')
-    .populate('user_id','name')
+    .populate('user_id', 'name')
     .populate('workspace_id', 'name')
     .exec()
     .then(doc => {
@@ -40,21 +43,19 @@ export function get(req, res) {
     })
 }
 
-export function post(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
-  const palette = new Palette({
-    user_id: req.body.user_id,
-    label: req.body.label,
-    colors_id: req.body.colors_id,
-    workspace_id:req.body.workspace_id
-  })
-  palette.save().then(result => {
-      res.status(201).json({
-        result
-      })
+export function getMy (req, res) {
+  const id = req.params.workspaceId
+  Palette.find({ 'workspace_id': `${id}` })
+    .populate('colors_id')
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json(doc)
+      } else {
+        res.status(404).json({
+          message: 'Nous avons rien trouver ... '
+        })
+      }
     })
     .catch(err => {
       res.status(500).json({
@@ -63,20 +64,71 @@ export function post(req, res) {
     })
 }
 
-export async function patch(req, res) {
+export async function post (req, res) {
+  console.log('🐛: post -> req.body', req.body)
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const workspaceId = req.body.workspace_id
+  if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+    return res.status(400).json({
+      error: 'ObjectId Invalid'
+    })
+  }
+
+  try {
+
+    // tab des id des couleurs
+    const ids = []
+
+    // boucle de creation des couleurs
+    for (const color of req.body.colors_id) {
+      const creation = new Color({
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+        alpha: 1
+      })
+      const result = await creation.save()
+      ids.push(result._id)
+    console.log('🐛: post -> result', result)
+    }
+
+    const palette = new Palette({
+      colors_id: ids,
+      label: req.body.label,
+      workspace_id: req.body.workspace_id
+    })
+    console.log('🐛: post -> palette', palette)
+
+    const result = await palette.save()
+    console.log('🐛: post -> result', result)
+    res.status(201).json({
+      result
+    })
+  } catch (error) {
+    console.log('🐛: post -> error', error)
+      return res.status(500).json({
+        err: error
+      })
+  }
+}
+
+export async function patch (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
 
- // on prend notre palette_id dans uri
+  // on prend notre palette_id dans uri
   const id = req.params.paletteId
 
   const palette = await Palette.findById(id) // verif si la res existe 
 
   if (palette === {}) { // on verif si on a recu quelque chose
     return res.status(404).json({
-      err:"ressource indisponible"
+      err: "ressource indisponible"
     })
   }
 
@@ -92,10 +144,10 @@ export async function patch(req, res) {
     updateOps[ops.propName] = ops.value
   }
   Palette.updateOne({
-      _id: id
-    }, {
-      $set: updateOps
-    })
+    _id: id
+  }, {
+    $set: updateOps
+  })
     .exec()
     .then(result => {
       res.status(200).json(result)
@@ -107,11 +159,11 @@ export async function patch(req, res) {
     })
 }
 
-export function remove(req, res) {
+export function remove (req, res) {
   const id = req.params.paletteId
   Palette.remove({
-      _id: id
-    }).exec()
+    _id: id
+  }).exec()
     .then(result => {
       res.status(200).json(result)
     })
