@@ -154,10 +154,6 @@ export async function addColor (req, res) {
   console.log('🐛: push -> req.workspace._id', req.workspace._id)
   console.log('🐛: push -> req.body._id', req.body._id)
   try {
-    // const result = await Workspace.updateOne(
-    //   { _id: req.workspace._id },
-    //   { $push: { colors_id: req.body._id } }
-    // )
     const { workspace } = req
     workspace.colors_id.push(req.body._id)
     await workspace.save()

@@ -1,4 +1,7 @@
+import mongoose from 'mongoose'
+
 import Palette from './../models/Palette'
+import Color from '../models/Color'
 import { validationResult } from 'express-validator'
 
 export function getAll (req, res) {
@@ -61,27 +64,55 @@ export function getMy (req, res) {
     })
 }
 
-export function post (req, res) {
+export async function post (req, res) {
+  console.log('🐛: post -> req.body', req.body)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  const palette = new Palette({
-    user_id: req.body.user_id,
-    label: req.body.label,
-    colors_id: req.body.colors_id,
-    workspace_id: req.body.workspace_id
-  })
-  palette.save().then(result => {
+  const workspaceId = req.body.workspace_id
+  if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+    return res.status(400).json({
+      error: 'ObjectId Invalid'
+    })
+  }
+
+  try {
+
+    // tab des id des couleurs
+    const ids = []
+
+    // boucle de creation des couleurs
+    for (const color of req.body.colors_id) {
+      const creation = new Color({
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+        alpha: 1
+      })
+      const result = await creation.save()
+      ids.push(result._id)
+    console.log('🐛: post -> result', result)
+    }
+
+    const palette = new Palette({
+      colors_id: ids,
+      label: req.body.label,
+      workspace_id: req.body.workspace_id
+    })
+    console.log('🐛: post -> palette', palette)
+
+    const result = await palette.save()
+    console.log('🐛: post -> result', result)
     res.status(201).json({
       result
     })
-  })
-    .catch(err => {
-      res.status(500).json({
-        error: err
+  } catch (error) {
+    console.log('🐛: post -> error', error)
+      return res.status(500).json({
+        err: error
       })
-    })
+  }
 }
 
 export async function patch (req, res) {

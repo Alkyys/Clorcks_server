@@ -1,4 +1,7 @@
+import mongoose from 'mongoose'
+
 import Gradient from '../models/Gradient'
+import Workspace from '../models/WorkSpace'
 import Color from '../models/Color'
 import { validationResult } from 'express-validator'
 
@@ -63,12 +66,18 @@ export function getMy (req, res) {
 }
 
 export async function post (req, res) {
-  console.log('🐛: post -> req.body', req.body)
+  console.log('🐛: post Gradient -> req.body', req.body)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  
+  const workspaceId = req.body.workspace_id
+  if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+    return res.status(400).json({
+      error: 'ObjectId Invalid'
+    })
+  }
+
   try {
     // creation de la couleur 1 
     const color1 = new Color({
@@ -77,7 +86,7 @@ export async function post (req, res) {
       blue: req.body.stops[0].color.blue,
       alpha: 1
     })
-  
+
     // creation de la couleur 2 
     const color2 = new Color({
       red: req.body.stops[1].color.red,
@@ -91,8 +100,26 @@ export async function post (req, res) {
     const result2 = await color2.save()
     console.log('🐛: post -> result2', result2)
 
+    // on cherche et on met on met les couleurs dans le workspace
+    try {
+      const workspace = await Workspace.findOne({
+        _id: workspaceId,
+        user_id: req.userData.user_id
+      })
+      if (!workspace) {
+        return res.sendStatus(404)
+      }
+      workspace.colors_id.push(result1._id, result2._id)
+      await workspace.save()
+    } catch (error) {
+      console.log('🐛: post -> error', error)
+      return res.status(500).json({
+        err: error
+      })
+    }
+
     // creation du gradinet 
-    const penis = new Gradient({
+    const gradient = new Gradient({
       user_id: req.body.user_id,
       stops: [
         {
@@ -106,9 +133,9 @@ export async function post (req, res) {
       label: req.body.label,
       workspace_id: req.body.workspace_id
     })
-    console.log('🐛: post -> gradient', penis)
+    console.log('🐛: post -> gradient', gradient)
 
-    const result = await penis.save()
+    const result = await gradient.save()
     console.log('🐛: post -> result', result)
     res.status(201).json({
       result
