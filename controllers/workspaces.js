@@ -1,6 +1,9 @@
-import Workspace from './../models/WorkSpace'
-import { validationResult } from 'express-validator'
 import mongoose from 'mongoose'
+
+import Workspace from './../models/WorkSpace'
+import Palette from './../models/Palette'
+import Gradient from '../models/Gradient'
+import { validationResult } from 'express-validator'
 
 export async function poplateOne (req, res, next) {
   const { workspaceId } = req.params
@@ -28,40 +31,11 @@ export async function poplateOne (req, res, next) {
 }
 
 export function getAll (req, res) {
-  Workspace.find().limit(50)
+  Workspace.find({ user_id: req.userData.user_id })
     .populate('colors_id')
-    .populate('user_id', 'name')
-    .populate('colorsLike_id')
-    .populate('palettesLike_id')
-    .populate('gradientsLike_id')
     .exec()
     .then(docs => {
       res.status(200).json(docs)
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
-}
-
-export function get (req, res) {
-  const id = req.params.workspaceId
-  Workspace.findById(id)
-    .populate('colors_id')
-    .populate('user_id', 'name')
-    .populate('colorsLike_id')
-    .populate('palettesLike_id')
-    .populate('gradientsLike_id')
-    .exec()
-    .then(doc => {
-      if (doc) {
-        res.status(200).json(doc)
-      } else {
-        res.status(404).json({
-          message: `Nous n'avons rien trouve ... `
-        })
-      }
     })
     .catch(err => {
       res.status(500).json({
@@ -82,9 +56,6 @@ export function getMy (req, res) {
       path: 'gradients_id',
       populate: { path: 'stops.color' }
     })
-    .populate('colorsLike_id')
-    .populate('palettesLike_id')
-    .populate('gradientsLike_id')
     .exec()
     .then(doc => {
       if (doc) {
@@ -102,13 +73,55 @@ export function getMy (req, res) {
     })
 }
 
+export function getMyGradient (req, res) {
+  const id = req.params.workspaceId
+  Gradient.find({ 'workspace_id': `${id}` })
+    .populate('stops.color', 'red blue green alpha name')
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json(doc)
+      } else {
+        res.status(404).json({
+          message: 'Nous avons rien trouver ... '
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+}
+
+export function getMyPalette (req, res) {
+  const id = req.params.workspaceId
+  Palette.find({ 'workspace_id': `${id}` })
+    .populate('colors_id')
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json(doc)
+      } else {
+        res.status(404).json({
+          message: 'Nous avons rien trouver ... '
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+}
+
 export function post (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   const workspace = new Workspace({
-    user_id: req.body.user_id,
+    user_id: req.userData.user_id,
     name: req.body.name
   })
   workspace.save().then(result => {

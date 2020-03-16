@@ -1,14 +1,16 @@
 import { Router } from 'express'
-import { poplateOne, getAll, get, getMy, post, patch, addColor, remove } from './../controllers/workspaces'
+import { poplateOne, getAll, getMyGradient, getMyPalette, getMy, post, patch, addColor, remove } from './../controllers/workspaces'
 import auth from './../middleware/auth'
 
 const router = Router()
 
-router.get('/', getAll)
+router.get('/', auth, getAll)
 
-router.get('/:workspaceId', get)
+// router.get('/:workspaceId', get)
 
-router.get('/my/:userId', getMy)
+router.get('/:workspaceId/gradient', auth, getMyGradient)
+
+router.get('/:workspaceId/palette', auth, getMyPalette)
 
 router.post('/', auth, post)
 

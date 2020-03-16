@@ -71,6 +71,7 @@ export async function post (req, res) {
     return res.status(422).json({ errors: errors.array() });
   }
   const workspaceId = req.body.workspace_id
+  console.log('🐛: post -> workspaceId', workspaceId)
   if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
     return res.status(400).json({
       error: 'ObjectId Invalid'
@@ -98,7 +99,7 @@ export async function post (req, res) {
     const palette = new Palette({
       colors_id: ids,
       label: req.body.label,
-      workspace_id: req.body.workspace_id
+      workspace_id: workspaceId
     })
     console.log('🐛: post -> palette', palette)
 

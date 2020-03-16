@@ -121,7 +121,7 @@ export function login (req, res) {
         // Auth reussi on envoi le token 
         res.status(200).json({
           message: "Auth successful",
-          token: token,
+          accessToken: token,
           user_id: user._id
         })
 
