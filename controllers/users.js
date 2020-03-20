@@ -111,7 +111,7 @@ export function login (req, res) {
 
       // si le mot de passe est bon on cree le token
       if (req.body.password === decrypted) {
-        const token = jwt.sign({
+        const accessToken = jwt.sign({
           email: user.email,
           user_id: user._id,
           name: user.name
@@ -121,7 +121,11 @@ export function login (req, res) {
         // Auth reussi on envoi le token 
         res.status(200).json({
           message: "Auth successful",
+<<<<<<< Updated upstream
           accessToken: token,
+=======
+          accessToken: accessToken,
+>>>>>>> Stashed changes
           user_id: user._id
         })
 
