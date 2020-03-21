@@ -121,11 +121,7 @@ export function login (req, res) {
         // Auth reussi on envoi le token 
         res.status(200).json({
           message: "Auth successful",
-<<<<<<< Updated upstream
-          accessToken: token,
-=======
           accessToken: accessToken,
->>>>>>> Stashed changes
           user_id: user._id
         })
 
