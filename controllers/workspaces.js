@@ -2,7 +2,8 @@ import mongoose from 'mongoose'
 
 import Workspace from './../models/WorkSpace'
 import Palette from './../models/Palette'
-import Gradient from '../models/Gradient'
+import Gradient from './../models/Gradient'
+import Color from './../models/Color'
 import { validationResult } from 'express-validator'
 
 export async function poplateOne (req, res, next) {
@@ -164,8 +165,6 @@ export function patch (req, res) {
 }
 
 export async function addColor (req, res) {
-  console.log('🐛: push -> req.workspace._id', req.workspace._id)
-  console.log('🐛: push -> req.body._id', req.body._id)
   try {
     const { workspace } = req
     workspace.colors_id.push(req.body._id)
@@ -175,6 +174,27 @@ export async function addColor (req, res) {
     console.log('🐛: push -> error', error)
     res.status(500).json({
       error: error
+    })
+  }
+}
+
+export async function removeColor (req, res) {
+  try {
+    if (req.params.colorId === undefined) {
+      res.status(500).json({
+        error: "colorId === undefined"
+      })
+    }
+    const { workspace } = req
+    const colorId = req.params.colorId
+    console.log(`update( { _id: ${workspace._id} }, { $pull: { colors_id: ${colorId} } } )`);
+    workspace.update({ _id: workspace._id }, { $pull: { colors_id: colorId } })
+    await workspace.save()
+    await Color.deleteOne({ _id: colorId })
+    res.status(201).json(workspace)
+  } catch (error) {
+    res.status(500).json({
+      err: error
     })
   }
 }
