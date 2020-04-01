@@ -1,5 +1,6 @@
 import Color from './../models/Color'
 import { validationResult } from 'express-validator'
+import creatcolor from '../service/creatcolor';
 
 export async function getAll (req, res) {
   try {
@@ -31,29 +32,51 @@ export function get (req, res) {
     })
 }
 
-export function post (req, res) {
+export async function post (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  const color = new Color({
-    red: req.body.red,
-    blue: req.body.blue,
-    green: req.body.green,
-    alpha: req.body.alpha
-  })
-  color.save()
-    .then(result => {
-      console.log('🐛: creation de couleur -> result', result)
-      res.status(201).json({
-        result
-      })
+
+  try {
+    const { color, error } = await creatcolor({
+      red: req.body.red,
+      blue: req.body.blue,
+      green: req.body.green,
+      alpha: req.body.alpha
     })
-    .catch(err => {
+    if (error) {
       res.status(500).json({
-        error: err
+        err: error
       })
+    }
+    res.status(201).json({
+      color
     })
+  } catch (error) {
+    console.log('🐛: post -> error', error)
+    res.status(500).json({
+      err: error
+    })
+  }
+  // const color = new Color({
+  //   red: req.body.red,
+  //   blue: req.body.blue,
+  //   green: req.body.green,
+  //   alpha: req.body.alpha
+  // })
+  // color.save()
+  // .then(result => {
+  //   console.log('🐛: creation de couleur -> result', result)
+  //   res.status(201).json({
+  //     result
+  //   })
+  // })
+  // .catch(err => {
+  //   res.status(500).json({
+  //     error: err
+  //   })
+  // })
 }
 
 export async function patch (req, res) {

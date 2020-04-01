@@ -15,6 +15,6 @@ router.post('/', auth, validation, post)
 
 router.patch('/:gradientId', auth, patch)
 
-router.delete('/:gradientsId', auth, remove)
+router.delete('/:gradientId', auth, remove)
 
 export default router

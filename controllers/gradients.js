@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
 
 import Gradient from '../models/Gradient'
-import Workspace from '../models/WorkSpace'
-import Color from '../models/Color'
 import { validationResult } from 'express-validator'
+import creatcolor from '../service/creatcolor';
 
 export function getAll (req, res) {
   Gradient.find().limit()
@@ -66,13 +65,11 @@ export function getMy (req, res) {
 }
 
 export async function post (req, res) {
-  console.log('🐛: post Gradient -> req.body', req.body)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  const workspaceId = req.body.workspace_id
-  if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+  if (!mongoose.Types.ObjectId.isValid(req.body.workspace_id)) {
     return res.status(400).json({
       error: 'ObjectId Invalid'
     })
@@ -80,7 +77,7 @@ export async function post (req, res) {
 
   try {
     // creation de la couleur 1 
-    const color1 = new Color({
+    const { color: color1, error1 } = await creatcolor({
       red: req.body.stops[0].color.red,
       green: req.body.stops[0].color.green,
       blue: req.body.stops[0].color.blue,
@@ -88,33 +85,16 @@ export async function post (req, res) {
     })
 
     // creation de la couleur 2 
-    const color2 = new Color({
+    const { color: color2, error2 } = await creatcolor({
       red: req.body.stops[1].color.red,
       green: req.body.stops[1].color.green,
       blue: req.body.stops[1].color.blue,
       alpha: 1
     })
-    // color -> bd
-    const result1 = await color1.save()
-    console.log('🐛: post -> result1', result1)
-    const result2 = await color2.save()
-    console.log('🐛: post -> result2', result2)
 
-    // on cherche et on met on met les couleurs dans le workspace
-    try {
-      const workspace = await Workspace.findOne({
-        _id: workspaceId,
-        user_id: req.userData.user_id
-      })
-      if (!workspace) {
-        return res.sendStatus(404)
-      }
-      workspace.colors_id.push(result1._id, result2._id)
-      await workspace.save()
-    } catch (error) {
-      console.log('🐛: post -> error', error)
-      return res.status(500).json({
-        err: error
+    if (error1 || error2) {
+      res.status(500).json({
+        error: error1 || error2
       })
     }
 
@@ -123,27 +103,30 @@ export async function post (req, res) {
       user_id: req.body.user_id,
       stops: [
         {
-          color: result1._id,
+          color: color1._id,
           position: 0
         }, {
-          color: result2._id,
+          color: color2._id,
           position: 100
         }
       ],
       label: req.body.label,
       workspace_id: req.body.workspace_id
     })
-    console.log('🐛: post -> gradient', gradient)
+    console.log('🐛: Gradient')
 
-    const result = await gradient.save()
-    console.log('🐛: post -> result', result)
+    let result = await gradient.save()
+    // remplacer les _id en couleur rgb 
+    result.stops[0].color = color1
+    result.stops[1].color = color2
+
     res.status(201).json({
       result
     })
   } catch (error) {
-    console.log('🐛: post -> error', error)
+    console.log('🐛: post gradient.js -> error', error)
     res.status(500).json({
-      error: error
+      err: error
     })
   }
 }
@@ -192,7 +175,7 @@ export async function patch (req, res) {
 }
 
 export function remove (req, res) {
-  const id = req.params.gradientsId
+  const id = req.params.gradientId
   Gradient.remove({
     _id: id
   }).exec()
