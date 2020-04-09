@@ -1,12 +1,10 @@
 import mongoose from 'mongoose'
 
 import Workspace from './../models/WorkSpace'
-import Palette from './../models/Palette'
-import Gradient from './../models/Gradient'
 import Color from './../models/Color'
 import { validationResult } from 'express-validator'
 
-export async function poplateOne (req, res, next) {
+async function populateOne (req, res, next) {
   const { workspaceId } = req.params
   if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
     return res.status(400).json({
@@ -18,11 +16,12 @@ export async function poplateOne (req, res, next) {
       _id: workspaceId,
       user_id: req.userData.user_id
     })
+    console.log('🐛: populateOne -> workspace._id', workspace._id)
     if (!workspace) {
       return res.sendStatus(404)
     }
-    Object.assign(req, { workspace })
-    console.log(`✅ poplateOn `);
+    await Object.assign(req, { workspace })
+    console.log(`✅ populate Workspace `);
     next()
   } catch (error) {
     return res.status(401).json({
@@ -31,92 +30,18 @@ export async function poplateOne (req, res, next) {
   }
 }
 
-export function getAll (req, res) {
-  Workspace.find({ user_id: req.userData.user_id })
-    .populate('colors_id')
-    .exec()
-    .then(docs => {
-      res.status(200).json(docs)
+async function list (req, res) {
+  try {
+    const result = await Workspace.find({ user_id: req.userData.user_id })
+    res.status(200).json(result)
+  } catch (error) {
+    res.status(500).json({
+      err: error
     })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
+  }
 }
 
-export function getMy (req, res) {
-  const id = req.params.userId
-  Workspace.find({ "user_id": `${id}` })
-    .populate('colors_id')
-    .populate({
-      path: 'palettes_id',
-      populate: { path: 'colors_id' }
-    })
-    .populate({
-      path: 'gradients_id',
-      populate: { path: 'stops.color' }
-    })
-    .exec()
-    .then(doc => {
-      if (doc) {
-        res.status(200).json(doc)
-      } else {
-        res.status(404).json({
-          message: `Nous n'avons rien trouve ... `
-        })
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
-}
-
-export function getMyGradient (req, res) {
-  const id = req.params.workspaceId
-  Gradient.find({ 'workspace_id': `${id}` })
-    .populate('stops.color', 'red blue green alpha name')
-    .exec()
-    .then(doc => {
-      if (doc) {
-        res.status(200).json(doc)
-      } else {
-        res.status(404).json({
-          message: 'Nous avons rien trouver ... '
-        })
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
-}
-
-export function getMyPalette (req, res) {
-  const id = req.params.workspaceId
-  Palette.find({ 'workspace_id': `${id}` })
-    .populate('colors_id')
-    .exec()
-    .then(doc => {
-      if (doc) {
-        res.status(200).json(doc)
-      } else {
-        res.status(404).json({
-          message: 'Nous avons rien trouver ... '
-        })
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
-}
-
-export function post (req, res) {
+function create (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -137,7 +62,7 @@ export function post (req, res) {
     })
 }
 
-export function patch (req, res) {
+function update (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -164,21 +89,7 @@ export function patch (req, res) {
     })
 }
 
-export async function addColor (req, res) {
-  try {
-    const { workspace } = req
-    workspace.colors_id.push(req.body._id)
-    await workspace.save()
-    res.status(201).json(workspace)
-  } catch (error) {
-    console.log('🐛: push -> error', error)
-    res.status(500).json({
-      error: error
-    })
-  }
-}
-
-export async function removeColor (req, res) {
+async function removeColor (req, res) {
   try {
     if (req.params.colorId === undefined) {
       res.status(500).json({
@@ -199,7 +110,7 @@ export async function removeColor (req, res) {
   }
 }
 
-export function remove (req, res) {
+function remove (req, res) {
   const id = req.params.workspaceId
   Workspace.remove({
     _id: id
@@ -212,4 +123,13 @@ export function remove (req, res) {
         error: err
       })
     })
+}
+
+export default {
+  populateOne,
+  list,
+  create,
+  update,
+  removeColor,
+  remove
 }

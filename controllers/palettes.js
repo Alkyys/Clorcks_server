@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
 import Palette from './../models/Palette'
-import Color from '../models/Color'
 import { validationResult } from 'express-validator'
 import creatcolor from '../service/creatcolor';
 
@@ -44,7 +43,7 @@ export function get (req, res) {
     })
 }
 
-export function getMy (req, res) {
+function listOwns (req, res) {
   const id = req.params.workspaceId
   Palette.find({ 'workspace_id': `${id}` })
     .populate('colors_id')
@@ -63,6 +62,44 @@ export function getMy (req, res) {
         error: err
       })
     })
+}
+
+async function populate (req, res) { }
+
+async function toggleLike (req, res) {
+  try {
+    const { workspace } = req
+    const item = req.body.item
+    const result = await workspace.palettesLike_id.indexOf(item._id)
+    if (result === -1) {
+      //on incremente likeCount de la palette
+      const palette = await Palette.findById(item._id)
+      console.log('🐛: toggleLike -> palette', palette)
+      console.log('🐛: toggleLike -> palette.likeCount', palette.likeCount)
+      palette.likeCount++
+      console.log('🐛: ❤ toggleLike palette -> likeCount apres', likeCount)
+      await palette.save()
+      // on rajoute l'id de la palette dans le workspace
+      workspace.palettesLike_id.push(item._id)
+      await workspace.save()
+      res.status(200).json({ liked: true })
+    } else {
+      //on decremente likeCount de la palette
+      const palette = await Palette.findById(item._id)
+      palette.likeCount--
+      console.log('🐛: 💔 toggleLike palette -> likeCount apres', likeCount)
+      await palette.save()
+      // on supp l'id de l'item
+      workspace.palettesLike_id.splice(result, 1)
+      await workspace.save()
+      res.status(200).json({ liked: false })
+    }
+  } catch (error) {
+    console.log('🐛: push -> error', error)
+    res.status(500).json({
+      error: error
+    })
+  }
 }
 
 export async function post (req, res) {
@@ -85,15 +122,6 @@ export async function post (req, res) {
 
     // boucle de creation des couleurs
     for (const item of req.body.colors_id) {
-      //   const creation = new Color({
-      //     red: color.red,
-      //     green: color.green,
-      //     blue: color.blue,
-      //     alpha: 1
-      //   })
-      //   const result = await creation.save()
-      //   ids.push(result._id)
-      // console.log('🐛: post -> result', result)
       const { color, error } = await creatcolor({
         red: item.red,
         green: item.green,
@@ -188,4 +216,10 @@ export function remove (req, res) {
         error: err
       })
     })
+}
+
+export default {
+  listOwns,
+  populate,
+  toggleLike
 }

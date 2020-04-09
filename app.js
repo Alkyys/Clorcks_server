@@ -30,7 +30,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
   if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATH, DELETE, GET')
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
     return res.status(200).json({})
   }
   next()
@@ -41,15 +41,18 @@ import paletteRoutes from './routes/palettes';
 import gradientRoutes from './routes/gradients';
 import usersRoutes from './routes/users';
 import workspacesRoutes from './routes/workspaces';
+import auth from './middleware/auth';
+
 app.use('/color', colorRoutes)
 app.use('/palette', paletteRoutes)
 app.use('/gradient', gradientRoutes)
 app.use('/user', usersRoutes)
-app.use('/workspace', workspacesRoutes)
+app.use('/workspace', auth, workspacesRoutes)
 
 //middleware qui gere les requetes innexistante
-app.use((req, res, next) => {
+app.use((next) => {
   const error = new Error('Not found')
+  console.log(`🤷‍♂️ mec ta requete n'existe pas 🤷‍♂️`);
   error.status = 404
   next(error)
 })

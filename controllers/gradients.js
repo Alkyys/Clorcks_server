@@ -43,7 +43,7 @@ export function get (req, res) {
     })
 }
 
-export function getMy (req, res) {
+function listOwns (req, res) {
   const id = req.params.workspaceId
   Gradient.find({ 'workspace_id': `${id}` })
     .populate('stops.color', 'red blue green alpha name')
@@ -62,6 +62,45 @@ export function getMy (req, res) {
         error: err
       })
     })
+}
+
+async function populate (req, res) {}
+
+async function toggleLike (req, res) {
+
+
+  const { workspace } = req
+  const item = req.body.item
+  try {
+    const result = await workspace.gradientsLike_id.indexOf(item._id)
+    if (result === -1) {
+      //on incremente likeCount de la gradient
+      const gradient = await Gradient.findById(item._id)
+      gradient.likeCount++
+      console.log('🐛: ❤ toggleLike gradient -> likeCount apres', likeCount)
+      await gradient.save()
+      // on rajoute l'id de la gradient dans le workspace
+      workspace.gradientsLike_id.push(item._id)
+      await workspace.save()
+      res.status(200).json({ liked: true })
+    } else {
+      //on decremente likeCount de la gradient
+      const gradient = await Gradient.findById(item._id)
+      gradient.likeCount--
+      console.log('🐛: 💔 toggleLike gradient -> likeCount apres', likeCount)
+      await gradient.save()
+      // on supp l'id de l'item
+      workspace.gradientsLike_id.splice(result, 1)
+      await workspace.save()
+      res.status(200).json({ liked: false })
+    }
+  } catch (error) {
+    console.log('🐛: push -> error', error)
+    res.status(500).json({
+      error: error
+    })
+  }
+
 }
 
 export async function post (req, res) {
@@ -187,4 +226,10 @@ export function remove (req, res) {
         error: err
       })
     })
+}
+
+export default {
+  listOwns,
+  populate,
+  toggleLike
 }

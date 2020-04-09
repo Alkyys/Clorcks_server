@@ -1,4 +1,5 @@
 import Color from './../models/Color'
+import Workspace from '../models/WorkSpace'
 import { validationResult } from 'express-validator'
 import creatcolor from '../service/creatcolor';
 
@@ -12,24 +13,62 @@ export async function getAll (req, res) {
   }
 }
 
-export function get (req, res) {
-  const id = req.params.colorId
-  Color.findById(id).exec()
-    .then(doc => {
-      if (doc) {
-        res.status(200).json(doc)
-      } else {
-        res.status(404).json({
-          message: `Nous n'avons rien trouve ... `
-        })
-      }
+async function listOwns (req, res) {
+  try {
+    const { workspace } = req
+    console.log('🐛: listOwns -> workspace._id', workspace._id)
+    const result = await Workspace
+      .findById(workspace._id)
+      .populate('colors_id')
+    res.status(201).json(
+      result.colors_id
+    )
+  } catch (error) {
+    res.status(500).json({
+      err: error
+    })
+  }
+}
 
+async function populate (req, res) { }
+
+async function toggleLike (req, res) {
+  console.log('🐛: toggleLike -> toggleLike')
+  try {
+    // on recupere id de worksapce 
+    const { workspace } = req
+    const item = req.body.item
+    const result = await workspace.colorsLike_id.indexOf(item._id)
+
+    if (result === -1) {
+      // on incremente likeCount de la couleur
+      const color = await Color.findById(item._id)
+      color.likeCount++
+      console.log('🐛: ❤ likeItem -> color.likeCount apres', color.likeCount)
+      await color.save()
+      // on rajoute l'id de item
+      workspace.colorsLike_id.push(item._id)
+      await workspace.save()
+      // valeur de retour
+      res.status(200).json({ liked: true })
+    } else {
+      // on supp l'id de l'item
+      const color = await Color.findById(item._id)
+      color.likeCount--
+      console.log('🐛: 💔 likeItem -> color.likeCount apres', color.likeCount)
+      await color.save()
+      workspace.colorsLike_id.splice(result, 1)
+      await workspace.save()
+      res.status(200).json({ liked: false })
+    }
+  } catch (error) {
+    console.log('🐛: push -> error', error)
+    res.status(500).json({
+      error: error
     })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
+  }
+
+
 }
 
 export async function post (req, res) {
@@ -59,24 +98,20 @@ export async function post (req, res) {
       err: error
     })
   }
-  // const color = new Color({
-  //   red: req.body.red,
-  //   blue: req.body.blue,
-  //   green: req.body.green,
-  //   alpha: req.body.alpha
-  // })
-  // color.save()
-  // .then(result => {
-  //   console.log('🐛: creation de couleur -> result', result)
-  //   res.status(201).json({
-  //     result
-  //   })
-  // })
-  // .catch(err => {
-  //   res.status(500).json({
-  //     error: err
-  //   })
-  // })
+}
+
+async function addColor (req, res) {
+  try {
+    const { workspace } = req
+    workspace.colors_id.push(req.body._id)
+    await workspace.save()
+    res.status(201).json(workspace)
+  } catch (error) {
+    console.log('🐛: push -> error', error)
+    res.status(500).json({
+      error: error
+    })
+  }
 }
 
 export async function patch (req, res) {
@@ -119,9 +154,9 @@ export function remove (req, res) {
           err: "cette resource ne vous appartient pas"
         })
       }
-      // TODO: demander a sacha si il manque pas quelque chose
     }).catch((err) => {
-      res.status(404).json({ // la resource n'existe pas
+      // la resource n'existe pas
+      res.status(404).json({
         error: err
       })
     });
@@ -136,4 +171,12 @@ export function remove (req, res) {
         error: err
       })
     })
+}
+
+export default {
+  listOwns,
+  populate,
+  toggleLike,
+  remove,
+  addColor
 }

@@ -57,7 +57,7 @@ export function signup (req, res) {
 
         user.save()
           .then(user => {
-          console.log("signup -> user", user)
+            console.log("signup -> user", user)
             // on cree notre premier workspace avec le _id qu'on a recu 
             // on le nommera main
             const workspace = new Workspace({
@@ -71,17 +71,8 @@ export function signup (req, res) {
                 error: err
               })
             }
-            const token = jwt.sign({
-              email: user.email,
-              user_id: user._id,
-              name: user.name
-            }, process.env.JWT_SECRET, {
-              expiresIn: "1h"
-            })
-            console.log("signup -> token", token)
             res.status(201).json({
               message: "User created",
-              token: token,
               user_id: user._id
             })
           })
@@ -118,10 +109,18 @@ export function login (req, res) {
         }, process.env.JWT_SECRET, {
           expiresIn: "1h"
         })
+        const refrehToken = jwt.sign({
+          email: user.email,
+          user_id: user._id,
+          name: user.name
+        }, process.env.JWT_SECRET, {
+          expiresIn: "1d"
+        })
         // Auth reussi on envoi le token 
         res.status(200).json({
           message: "Auth successful",
           accessToken: accessToken,
+          refrehToken: refrehToken,
           user_id: user._id
         })
 
