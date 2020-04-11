@@ -76,8 +76,8 @@ async function toggleLike (req, res) {
       const palette = await Palette.findById(item._id)
       console.log('🐛: toggleLike -> palette', palette)
       console.log('🐛: toggleLike -> palette.likeCount', palette.likeCount)
-      palette.likeCount += 1
-      console.log('🐛: ❤ toggleLike palette -> likeCount apres', likeCount)
+      palette.likeCount++
+      console.log('🐛: ❤ toggleLike palette -> likeCount apres', palette.likeCount)
       await palette.save()
       // on rajoute l'id de la palette dans le workspace
       workspace.palettesLike_id.push(item._id)
@@ -86,8 +86,8 @@ async function toggleLike (req, res) {
     } else {
       //on decremente likeCount de la palette
       const palette = await Palette.findById(item._id)
-      palette.likeCount -= 1
-      console.log('🐛: 💔 toggleLike palette -> likeCount apres', likeCount)
+      palette.likeCount--
+      console.log('🐛: 💔 toggleLike palette -> likeCount apres', palette.likeCount)
       await palette.save()
       // on supp l'id de l'item
       workspace.palettesLike_id.splice(result, 1)
