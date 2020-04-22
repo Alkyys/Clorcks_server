@@ -16,7 +16,6 @@ async function populateOne (req, res, next) {
       _id: workspaceId,
       user_id: req.userData.user_id
     })
-    console.log('🐛: populateOne -> workspace._id', workspace._id)
     if (!workspace) {
       return res.sendStatus(404)
     }
@@ -25,7 +24,8 @@ async function populateOne (req, res, next) {
     next()
   } catch (error) {
     return res.status(401).json({
-      err: error
+      err: error,
+      message: 'populateOne Workspace error'
     })
   }
 }

@@ -100,6 +100,7 @@ export function login (req, res) {
       let decrypted = decipher.update(user.password, 'hex', 'utf-8');
       decrypted += decipher.final('utf-8');
 
+      console.log('🐛: login -> user', user)
       // si le mot de passe est bon on cree le token
       if (req.body.password === decrypted) {
         const accessToken = jwt.sign({
@@ -107,9 +108,9 @@ export function login (req, res) {
           user_id: user._id,
           name: user.name
         }, process.env.JWT_SECRET, {
-          expiresIn: "1h"
+          expiresIn: "10s"
         })
-        const refrehToken = jwt.sign({
+        const refreshToken = jwt.sign({
           email: user.email,
           user_id: user._id,
           name: user.name
@@ -117,11 +118,10 @@ export function login (req, res) {
           expiresIn: "1d"
         })
         // Auth reussi on envoi le token 
-        res.status(200).json({
-          message: "Auth successful",
+        res.status(201).json({
+          message: "New Tokens",
           accessToken: accessToken,
-          refrehToken: refrehToken,
-          user_id: user._id
+          refreshToken: refreshToken
         })
 
       } else {
@@ -135,6 +135,41 @@ export function login (req, res) {
         error: err
       })
     })
+}
+
+export function refreshToken (req, res) {
+  try {
+    console.log('🐛: refreshToken -> req.body.refreshToken', req.body.refreshToken)
+    // on check le refresh token
+    const user = jwt.verify(req.body.refreshToken, process.env.JWT_SECRET)
+    
+    // si c'est bon on cree un nouveau accessToken et refrechtoken
+    const accessToken = jwt.sign({
+      email: user.email,
+      user_id: user.user_id,
+      name: user.name
+    }, process.env.JWT_SECRET, {
+      expiresIn: "10s"
+    })
+    const refreshToken = jwt.sign({
+      email: user.email,
+      user_id: user.user_id,
+      name: user.name
+    }, process.env.JWT_SECRET, {
+      expiresIn: "1d"
+    })
+    res.status(200).json({
+      message: "Auth successful",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      user_id: user._id
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: "faild to creat new token",
+      error: err
+    })
+  }
 }
 
 export function patch (req, res) {
