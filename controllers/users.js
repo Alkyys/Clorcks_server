@@ -130,7 +130,7 @@ export function login (req, res) {
         })
       }
     }).catch(err => {
-      res.status(401).json({
+      res.status(500).json({
         message: "Auth faild",
         error: err
       })
@@ -164,7 +164,7 @@ export function refreshToken (req, res) {
       user_id: user._id
     })
   } catch (err) {
-    res.status(500).json({
+    res.status(498).json({
       message: "faild to creat new token",
       error: err
     })
