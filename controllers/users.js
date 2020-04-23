@@ -107,7 +107,7 @@ export function login (req, res) {
           user_id: user._id,
           name: user.name
         }, process.env.JWT_SECRET, {
-          expiresIn: "10s"
+          expiresIn: "1h"
         })
         const refreshToken = jwt.sign({
           email: user.email,
@@ -148,7 +148,7 @@ export function refreshToken (req, res) {
       user_id: user.user_id,
       name: user.name
     }, process.env.JWT_SECRET, {
-      expiresIn: "10s"
+      expiresIn: "1h"
     })
     const refreshToken = jwt.sign({
       email: user.email,
