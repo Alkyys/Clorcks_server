@@ -125,7 +125,7 @@ export function login (req, res) {
         })
 
       } else {
-        res.status(401).json({
+        res.status(400).json({
           message: 'Auth failed'
         })
       }
