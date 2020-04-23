@@ -57,7 +57,6 @@ export function signup (req, res) {
 
         user.save()
           .then(user => {
-            console.log("signup -> user", user)
             // on cree notre premier workspace avec le _id qu'on a recu 
             // on le nommera main
             const workspace = new Workspace({
@@ -71,6 +70,7 @@ export function signup (req, res) {
                 error: err
               })
             }
+            console.log("☑ User Created", user)
             res.status(201).json({
               message: "User created",
               user_id: user._id
@@ -100,7 +100,6 @@ export function login (req, res) {
       let decrypted = decipher.update(user.password, 'hex', 'utf-8');
       decrypted += decipher.final('utf-8');
 
-      console.log('🐛: login -> user', user)
       // si le mot de passe est bon on cree le token
       if (req.body.password === decrypted) {
         const accessToken = jwt.sign({
@@ -118,6 +117,7 @@ export function login (req, res) {
           expiresIn: "1d"
         })
         // Auth reussi on envoi le token 
+        console.log(`✅ Login`)
         res.status(201).json({
           message: "New Tokens",
           accessToken: accessToken,
@@ -139,10 +139,9 @@ export function login (req, res) {
 
 export function refreshToken (req, res) {
   try {
-    console.log('🐛: refreshToken -> req.body.refreshToken', req.body.refreshToken)
     // on check le refresh token
     const user = jwt.verify(req.body.refreshToken, process.env.JWT_SECRET)
-    
+
     // si c'est bon on cree un nouveau accessToken et refrechtoken
     const accessToken = jwt.sign({
       email: user.email,

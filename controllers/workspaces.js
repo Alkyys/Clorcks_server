@@ -98,7 +98,6 @@ async function removeColor (req, res) {
     }
     const { workspace } = req
     const colorId = req.params.colorId
-    console.log(`update( { _id: ${workspace._id} }, { $pull: { colors_id: ${colorId} } } )`);
     workspace.update({ _id: workspace._id }, { $pull: { colors_id: colorId } })
     await workspace.save()
     await Color.deleteOne({ _id: colorId })

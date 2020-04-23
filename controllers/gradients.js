@@ -77,7 +77,7 @@ async function toggleLike (req, res) {
       //on incremente likeCount de la gradient
       const gradient = await Gradient.findById(item._id)
       gradient.likeCount++
-      console.log('🐛: ❤ toggleLike gradient -> likeCount apres', gradient.likeCount)
+      console.log('🐛: ❤ ', gradient.likeCount)
       await gradient.save()
       // on rajoute l'id de la gradient dans le workspace
       workspace.gradientsLike_id.push(item._id)
@@ -87,7 +87,7 @@ async function toggleLike (req, res) {
       //on decremente likeCount de la gradient
       const gradient = await Gradient.findById(item._id)
       gradient.likeCount--
-      console.log('🐛: 💔 toggleLike gradient -> likeCount apres', gradient.likeCount)
+      console.log('🐛: 💔 ', gradient.likeCount)
       await gradient.save()
       // on supp l'id de l'item
       workspace.gradientsLike_id.splice(result, 1)
@@ -152,13 +152,14 @@ export async function post (req, res) {
       label: req.body.label,
       workspace_id: req.body.workspace_id
     })
-    console.log('🐛: Gradient')
 
     let result = await gradient.save()
     // remplacer les _id en couleur rgb 
     result.stops[0].color = color1
     result.stops[1].color = color2
 
+    console.log(`☑ Gradient Creted !`);
+    
     res.status(201).json({
       result
     })

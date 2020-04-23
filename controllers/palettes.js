@@ -74,10 +74,8 @@ async function toggleLike (req, res) {
     if (result === -1) {
       //on incremente likeCount de la palette
       const palette = await Palette.findById(item._id)
-      console.log('🐛: toggleLike -> palette', palette)
-      console.log('🐛: toggleLike -> palette.likeCount', palette.likeCount)
       palette.likeCount++
-      console.log('🐛: ❤ toggleLike palette -> likeCount apres', palette.likeCount)
+      console.log('🐛: ❤ ', palette.likeCount)
       await palette.save()
       // on rajoute l'id de la palette dans le workspace
       workspace.palettesLike_id.push(item._id)
@@ -87,7 +85,7 @@ async function toggleLike (req, res) {
       //on decremente likeCount de la palette
       const palette = await Palette.findById(item._id)
       palette.likeCount--
-      console.log('🐛: 💔 toggleLike palette -> likeCount apres', palette.likeCount)
+      console.log('🐛: 💔 ', palette.likeCount)
       await palette.save()
       // on supp l'id de l'item
       workspace.palettesLike_id.splice(result, 1)
@@ -103,7 +101,6 @@ async function toggleLike (req, res) {
 }
 
 export async function post (req, res) {
-  console.log('🐛: post -> req.body', req.body)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -133,7 +130,6 @@ export async function post (req, res) {
           error: error
         })
       }
-      console.log('🐛: post -> color', color)
       ids.push(color._id)
       colors.push(color)
     }
@@ -143,11 +139,10 @@ export async function post (req, res) {
       label: req.body.label,
       workspace_id: req.body.workspace_id
     })
-    console.log('🐛: post -> palette', palette)
 
     let result = await palette.save()
     result.colors_id = colors
-    console.log('🐛: post -> result', result)
+    console.log(`☑ Palette Creted !`);
     res.status(201).json({
       result
     })

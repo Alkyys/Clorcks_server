@@ -16,7 +16,6 @@ export async function getAll (req, res) {
 async function listOwns (req, res) {
   try {
     const { workspace } = req
-    console.log('🐛: listOwns -> workspace._id', workspace._id)
     const result = await Workspace
       .findById(workspace._id)
       .populate('colors_id')
@@ -33,7 +32,6 @@ async function listOwns (req, res) {
 async function populate (req, res) { }
 
 async function toggleLike (req, res) {
-  console.log('🐛: toggleLike -> toggleLike')
   try {
     // on recupere id de worksapce 
     const { workspace } = req
@@ -44,7 +42,7 @@ async function toggleLike (req, res) {
       // on incremente likeCount de la couleur
       const color = await Color.findById(item._id)
       color.likeCount++
-      console.log('🐛: ❤ likeItem -> color.likeCount apres', color.likeCount)
+      console.log(' ❤ ', color.likeCount)
       await color.save()
       // on rajoute l'id de item
       workspace.colorsLike_id.push(item._id)
@@ -55,7 +53,7 @@ async function toggleLike (req, res) {
       // on supp l'id de l'item
       const color = await Color.findById(item._id)
       color.likeCount--
-      console.log('🐛: 💔 likeItem -> color.likeCount apres', color.likeCount)
+      console.log('🐛: 💔', color.likeCount)
       await color.save()
       workspace.colorsLike_id.splice(result, 1)
       await workspace.save()
