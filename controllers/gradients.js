@@ -1,12 +1,12 @@
 import mongoose from 'mongoose'
 
-import Palette from './../models/Palette'
+import Gradient from '../models/Gradient'
 import { validationResult } from 'express-validator'
 import creatcolor from '../service/creatcolor';
 
 export function getAll (req, res) {
-  Palette.find().limit(50)
-    .populate('colors_id')
+  Gradient.find().limit()
+    .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
     .populate('workspace_id', 'name')
     .exec()
@@ -21,9 +21,9 @@ export function getAll (req, res) {
 }
 
 export function get (req, res) {
-  const id = req.params.paletteId
-  Palette.findById(id)
-    .populate('colors_id')
+  const id = req.params.gradientId
+  Gradient.findById(id)
+    .populate('stops.color', 'red blue green alpha name')
     .populate('user_id', 'name')
     .populate('workspace_id', 'name')
     .exec()
@@ -45,8 +45,8 @@ export function get (req, res) {
 
 function listOwns (req, res) {
   const id = req.params.workspaceId
-  Palette.find({ 'workspace_id': `${id}` })
-    .populate('colors_id')
+  Gradient.find({ 'workspace_id': `${id}` })
+    .populate('stops.color', 'red blue green alpha name')
     .exec()
     .then(doc => {
       if (doc) {
@@ -64,31 +64,33 @@ function listOwns (req, res) {
     })
 }
 
-async function populate (req, res) { }
+async function populate (req, res) {}
 
 async function toggleLike (req, res) {
+
+
+  const { workspace } = req
+  const gradientId = req.params.gradientId
   try {
-    const { workspace } = req
-    const paletteId = req.params.paletteId
-    const result = await workspace.palettesLike_id.indexOf(paletteId)
+    const result = await workspace.gradientsLike_id.indexOf(gradientId)
     if (result === -1) {
-      //on incremente likeCount de la palette
-      const palette = await Palette.findById(paletteId)
-      palette.likeCount++
-      console.log('❤ ', palette.likeCount)
-      await palette.save()
-      // on rajoute l'id de la palette dans le workspace
-      workspace.palettesLike_id.push(paletteId)
+      //on incremente likeCount de la gradient
+      const gradient = await Gradient.findById(gradientId)
+      gradient.likeCount++
+      console.log('❤ ', gradient.likeCount)
+      await gradient.save()
+      // on rajoute l'id de la gradient dans le workspace
+      workspace.gradientsLike_id.push(gradientId)
       await workspace.save()
       res.status(200).json({ liked: true })
     } else {
-      //on decremente likeCount de la palette
-      const palette = await Palette.findById(paletteId)
-      palette.likeCount--
-      console.log('💔 ', palette.likeCount)
-      await palette.save()
+      //on decremente likeCount de la gradient
+      const gradient = await Gradient.findById(gradientId)
+      gradient.likeCount--
+      console.log('💔', gradient.likeCount)
+      await gradient.save()
       // on supp l'id de l'item
-      workspace.palettesLike_id.splice(result, 1)
+      workspace.gradientsLike_id.splice(result, 1)
       await workspace.save()
       res.status(200).json({ liked: false })
     }
@@ -98,6 +100,7 @@ async function toggleLike (req, res) {
       error: error
     })
   }
+
 }
 
 export async function post (req, res) {
@@ -105,7 +108,6 @@ export async function post (req, res) {
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-
   if (!mongoose.Types.ObjectId.isValid(req.body.workspace_id)) {
     return res.status(400).json({
       error: 'ObjectId Invalid'
@@ -113,42 +115,57 @@ export async function post (req, res) {
   }
 
   try {
-    // tab des id des couleurs
-    const ids = []
-    const colors = []
+    // creation de la couleur 1 
+    const { color: color1, error1 } = await creatcolor({
+      red: req.body.stops[0].color.red,
+      green: req.body.stops[0].color.green,
+      blue: req.body.stops[0].color.blue,
+      alpha: 1
+    })
 
-    // boucle de creation des couleurs
-    for (const item of req.body.colors_id) {
-      const { color, error } = await creatcolor({
-        red: item.red,
-        green: item.green,
-        blue: item.blue,
-        alpha: 1
+    // creation de la couleur 2 
+    const { color: color2, error2 } = await creatcolor({
+      red: req.body.stops[1].color.red,
+      green: req.body.stops[1].color.green,
+      blue: req.body.stops[1].color.blue,
+      alpha: 1
+    })
+
+    if (error1 || error2) {
+      res.status(500).json({
+        error: error1 || error2
       })
-      if (error) {
-        res.status(500).json({
-          error: error
-        })
-      }
-      ids.push(color._id)
-      colors.push(color)
     }
 
-    const palette = new Palette({
-      colors_id: ids,
+    // creation du gradinet 
+    const gradient = new Gradient({
+      user_id: req.body.user_id,
+      stops: [
+        {
+          color: color1._id,
+          position: 0
+        }, {
+          color: color2._id,
+          position: 100
+        }
+      ],
       label: req.body.label,
       workspace_id: req.body.workspace_id
     })
 
-    let result = await palette.save()
-    result.colors_id = colors
-    console.log(`☑ Palette Creted !`);
+    let result = await gradient.save()
+    // remplacer les _id en couleur rgb 
+    result.stops[0].color = color1
+    result.stops[1].color = color2
+
+    console.log(`☑ Gradient Creted !`);
+    
     res.status(201).json({
       result
     })
   } catch (error) {
-    console.log('🐛: post -> error', error)
-    return res.status(500).json({
+    console.log('🐛: post gradient.js -> error', error)
+    res.status(500).json({
       err: error
     })
   }
@@ -160,29 +177,28 @@ export async function patch (req, res) {
     return res.status(422).json({ errors: errors.array() });
   }
 
-  // on prend notre palette_id dans uri
-  const id = req.params.paletteId
+  const id = req.params.gradientId // on prend notre gradient_id dans uri
 
-  const palette = await Palette.findById(id) // verif si la res existe 
+  const gradient = await Gradient.findById(id) // verif si la res existe 
 
-  if (palette === {}) { // on verif si on a recu quelque chose
+  if (gradient === {}) { // on verif si on a recu quelque chose
     return res.status(404).json({
       err: "ressource indisponible"
     })
   }
 
-  Object.assign(palette, req.body)
+  Object.assign(gradient, req.body)
 
-  // Si le palette n'a pas été modifié, la renvoyer
-  if (!palette.isModified()) {
-    return res.status(203).json(palette)
+  // Si le degrader n'a pas été modifié, le renvoyer
+  if (!gradient.isModified()) {
+    return res.status(203).json(gradient)
   }
 
   const updateOps = {}
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value
   }
-  Palette.updateOne({
+  Gradient.updateOne({
     _id: id
   }, {
     $set: updateOps
@@ -199,8 +215,8 @@ export async function patch (req, res) {
 }
 
 export function remove (req, res) {
-  const id = req.params.paletteId
-  Palette.remove({
+  const id = req.params.gradientId
+  Gradient.remove({
     _id: id
   }).exec()
     .then(result => {

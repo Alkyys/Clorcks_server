@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schema.Types.ObjectId
 
-const StopSchema = new mongoose.Schema({
+const StopSchema = new Schema({
   color: {
     type: ObjectId,
     ref: 'Color'
@@ -15,18 +15,22 @@ const StopSchema = new mongoose.Schema({
   }
 }, { _id: false })
 
-const GradiantSchema = new mongoose.Schema({
-  user_id: {
-    type: ObjectId,
-    required: true,
-    ref: 'User'
-  },
+const GradiantSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
   },
+  workspace_id: {
+    type: ObjectId,
+    required: true,
+    ref: 'Workspace'
+  },
   label: {
     type: String
+  },
+  likeCount: {
+    type: Number,
+    default: 0
   },
   stops: [{
     type: StopSchema,
@@ -35,9 +39,14 @@ const GradiantSchema = new mongoose.Schema({
   }],
 })
 
-
 function arrayLimit (val) {
   return val.length >= 2 && val.length <= 24
 }
 
-module.exports = mongoose.model('gradiant', GradiantSchema)
+// methode de verification user_id
+GradiantSchema.methods.isOwnwer = function ({ _id: userId }) {
+  return this._id === userId
+}
+
+
+export default model('Gradient', GradiantSchema)

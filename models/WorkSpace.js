@@ -1,28 +1,46 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schema.Types.ObjectId
 
-const WorkSpaceSchema = new mongoose.Schema({
-  red: {
-    type: Number,
-    required: true
-  },
+const WorkSpaceSchema = new Schema({
   colors_id: {
-    type: [ObjectId],
-    default: undefined,
-    ref: 'Colors',
+    type: [{
+      type: ObjectId,
+      ref: 'Color'
+    }],
+    default: []
+  },
+  user_id: {
+    type: ObjectId,
+    ref: 'User',
     required: true
   },
-  likes: {
+  colorsLike_id: {
     type: [ObjectId],
-    default: undefined,
-    ref: 'Colors',
-    required: true
+    ref: 'Colors'
+  },
+  palettesLike_id: {
+    type: [ObjectId],
+    ref: 'Palette'
+  },
+  gradientsLike_id: {
+    type: [ObjectId],
+    ref: 'Gradiant'
   },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  name: {
+    type: String,
+    required: true
   }
 })
 
-module.exports = mongoose.model('workspace', WorkSpaceSchema)
+// methode de verification user_id
+WorkSpaceSchema.methods.isOwnwer = function ({ _id: userId }) {
+  return this._id === userId
+}
+
+
+export default model('Workspace', WorkSpaceSchema)

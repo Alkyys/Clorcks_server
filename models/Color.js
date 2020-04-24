@@ -1,29 +1,36 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ColorSchema = new mongoose.Schema({
+const ColorSchema = new Schema({
   red: {
     type: Number,
-    required: true
+    required: true,
+    min: 0,
+    max: 255
   },
   blue: {
     type: Number,
-    required: true
+    required: true,
+    min: 0,
+    max: 255
   },
   green: {
     type: Number,
-    required: true
+    required: true,
+    min: 0,
+    max: 255
   },
   alpha: {
     type: Number,
-    required: true
+    required: true,
+    min: 0,
+    max: 100
   },
   likeCount: {
     type: Number,
     default: 0
   },
   name: {
-    type: String,
-    required: true
+    type: String
   },
   createdAt: {
     type: Date,
@@ -31,4 +38,4 @@ const ColorSchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('Color', ColorSchema)
+export default model('Color', ColorSchema)

@@ -1,13 +1,8 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schema.Types.ObjectId
 
-const PaletteSchema = new mongoose.Schema({
-  user_id: {
-    type: ObjectId,
-    required: true,
-    ref: 'User'
-  },
+const PaletteSchema = new Schema({
   likeCount: {
     type: Number,
     default: 0
@@ -27,6 +22,11 @@ const PaletteSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  workspace_id: {
+    type: ObjectId,
+    required: true,
+    ref: 'Workspace'
   }
 })
 
@@ -34,4 +34,9 @@ function arrayLimit (val) {
   return val.length >= 2 && val.length <= 5
 }
 
-module.exports = mongoose.model('Palette', PaletteSchema)
+// methode de verification user_id
+PaletteSchema.methods.isOwnwer = function ({ _id: userId }) {
+  return this._id === userId
+}
+
+export default model('Palette', PaletteSchema)

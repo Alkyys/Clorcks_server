@@ -1,15 +1,18 @@
-const express = require('express')
-const router = express.Router()
-const PaletteController = require('./../controllers/palettes')
+import { Router } from 'express'
+import { getAll, get, listOwns, post, patch, remove } from './../controllers/palettes'
+import auth from './../middleware/auth'
+import { validation } from './../middleware/palette.check'
 
-router.get('/', PaletteController.getAll)
+const router = Router()
 
-router.get('/:paletteId', PaletteController.get)
+router.get('/', getAll)
 
-router.post('/', PaletteController.post)
+router.get('/:paletteId', get)
 
-router.patch('/:paletteId', PaletteController.patch)
+router.post('/', auth, validation, post)
 
-router.delete('/:paletteId', PaletteController.delete)
+router.patch('/:paletteId', auth, patch)
 
-module.exports = router
+router.delete('/:paletteId', auth, remove)
+
+export default router
