@@ -37,23 +37,23 @@ async function toggleLike (req, res) {
   try {
     // on recupere id de worksapce 
     const { workspace } = req
-    const item = req.body.item
-    const result = await workspace.colorsLike_id.indexOf(item._id)
+    const colorId = req.params.colorId
+    const result = await workspace.colorsLike_id.indexOf(colorId)
 
     if (result === -1) {
       // on incremente likeCount de la couleur
-      const color = await Color.findById(item._id)
+      const color = await Color.findById(colorId)
       color.likeCount++
       console.log('🐛: ❤ likeItem -> color.likeCount apres', color.likeCount)
       await color.save()
       // on rajoute l'id de item
-      workspace.colorsLike_id.push(item._id)
+      workspace.colorsLike_id.push(colorId)
       await workspace.save()
       // valeur de retour
       res.status(200).json({ liked: true })
     } else {
       // on supp l'id de l'item
-      const color = await Color.findById(item._id)
+      const color = await Color.findById(colorId)
       color.likeCount--
       console.log('🐛: 💔 likeItem -> color.likeCount apres', color.likeCount)
       await color.save()
