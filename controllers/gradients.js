@@ -77,7 +77,7 @@ async function toggleLike (req, res) {
       //on incremente likeCount de la gradient
       const gradient = await Gradient.findById(gradientId)
       gradient.likeCount++
-      console.log('🐛: ❤ toggleLike gradient -> likeCount apres', likeCount)
+      console.log('❤ ', gradient.likeCount)
       await gradient.save()
       // on rajoute l'id de la gradient dans le workspace
       workspace.gradientsLike_id.push(gradientId)
@@ -87,7 +87,7 @@ async function toggleLike (req, res) {
       //on decremente likeCount de la gradient
       const gradient = await Gradient.findById(gradientId)
       gradient.likeCount--
-      console.log('🐛: 💔 toggleLike gradient -> likeCount apres', likeCount)
+      console.log('💔', gradient.likeCount)
       await gradient.save()
       // on supp l'id de l'item
       workspace.gradientsLike_id.splice(result, 1)
