@@ -69,23 +69,23 @@ async function populate (req, res) { }
 async function toggleLike (req, res) {
   try {
     const { workspace } = req
-    const item = req.body.item
-    const result = await workspace.palettesLike_id.indexOf(item._id)
+    const paletteId = req.params.paletteId
+    const result = await workspace.palettesLike_id.indexOf(paletteId)
     if (result === -1) {
       //on incremente likeCount de la palette
-      const palette = await Palette.findById(item._id)
+      const palette = await Palette.findById(paletteId)
       palette.likeCount++
-      console.log('🐛: ❤ ', palette.likeCount)
+      console.log('❤ ', palette.likeCount)
       await palette.save()
       // on rajoute l'id de la palette dans le workspace
-      workspace.palettesLike_id.push(item._id)
+      workspace.palettesLike_id.push(paletteId)
       await workspace.save()
       res.status(200).json({ liked: true })
     } else {
       //on decremente likeCount de la palette
-      const palette = await Palette.findById(item._id)
+      const palette = await Palette.findById(paletteId)
       palette.likeCount--
-      console.log('🐛: 💔 ', palette.likeCount)
+      console.log('💔 ', palette.likeCount)
       await palette.save()
       // on supp l'id de l'item
       workspace.palettesLike_id.splice(result, 1)
